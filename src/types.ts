@@ -15,19 +15,27 @@ export type CurlUIElement = {
     _unmounted_: () => void;
     unmounted?: () => any;
 };
-export type CurlUIElementProps = CurlUIElementAttributeProps & CurlUIElementEventListenerProps & {
-    className?: string;
-    style?: CurlUIElementStyleProps;
-    instanceReference?: CurlUIInstanceReference;
-    [key: string]: any;
-};
+
+export type CurlUIElementProps = CurlUIElementAttributeProps &
+    CurlUIElementEventListenerProps & {
+        className?: string;
+        style?: CurlUIElementStyleProps;
+        instanceReference?: CurlUIInstanceReference;
+        //
+        [key: string]: any;
+    };
+
 export type CurlUIElementState = {
     [key: string]: any;
 };
+
 export type CurlUIComponentProps = {
     getInitialState?: () => CurlUIElementState;
     getDefaultProps?: () => CurlUIElementProps;
-    update?: (currentState: CurlUIElementState, newState: CurlUIElementState) => boolean;
+    update?: (
+        currentState: CurlUIElementState,
+        newState: CurlUIElementState
+    ) => boolean;
     updating?: () => any;
     updated?: () => any;
     mounting?: () => any;
@@ -35,36 +43,47 @@ export type CurlUIComponentProps = {
     unmounting?: () => any;
     unmounted?: () => any;
     render: () => CurlUIRenderElement;
+    //
     [key: string]: any;
 };
+
 export type CurlUIWrappedComponent = CurlUIComponentProps & {
     isComponent: boolean;
     componentId: string;
 };
+
 export interface CurlUIComponent {
     (props: CurlUIElementProps): CurlUIRenderElement;
 }
-export type CurlUIComponentInstance = CurlUIElement & CurlUIWrappedComponent & {
-    state: CurlUIElementState;
-    props: CurlUIElementProps;
-    setState(state: CurlUIElementState): void;
-    getState(): CurlUIElementState;
-    getProps(): CurlUIElementProps;
-    initialize(): void;
-    [key: string]: any;
-};
+
+export type CurlUIComponentInstance = CurlUIElement &
+    CurlUIWrappedComponent & {
+        state: CurlUIElementState;
+        props: CurlUIElementProps;
+        setState(state: CurlUIElementState): void;
+        getState(): CurlUIElementState;
+        getProps(): CurlUIElementProps;
+        initialize(): void;
+        //
+        [key: string]: any;
+    };
+
 export type CurlUIInstanceReference = {
     isInstanceReference: boolean;
     instance: HTMLElement | SVGElement | CurlUIComponentInstance | null;
 };
+
 export type CurlUIRenderElement = CurlUIElement | CurlUIComponentInstance;
 export type CurlUINativeElement = HTMLElement | SVGElement;
+
 export type CurlUIStoreState = {
     [key: string]: any;
 };
+
 export type CurlUIStoreHandlers = {
     [key: string]: Function;
 };
+
 export type CurlUIStore = {
     state: CurlUIStoreState;
     handlers: CurlUIStoreHandlers;
@@ -73,9 +92,129 @@ export type CurlUIStore = {
     subscribe(handler: Function): string;
     unsubscribe(handlerId: string): void;
 };
-export type CurlUIChildComponent = string | number | boolean | CurlUIElement | null;
-export type CurlUIHtmlTag = "a" | "abbr" | "address" | "area" | "article" | "aside" | "audio" | "b" | "base" | "bdi" | "bdo" | "blockquote" | "body" | "br" | "button" | "canvas" | "caption" | "cite" | "code" | "col" | "colgroup" | "data" | "datalist" | "dd" | "del" | "details" | "dfn" | "dialog" | "div" | "dl" | "dt" | "em" | "embed" | "fieldset" | "figcaption" | "figure" | "footer" | "form" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "head" | "header" | "hgroup" | "hr" | "html" | "i" | "iframe" | "img" | "input" | "ins" | "kbd" | "label" | "legend" | "li" | "link" | "main" | "map" | "mark" | "menu" | "meta" | "meter" | "nav" | "noscript" | "object" | "ol" | "optgroup" | "option" | "output" | "p" | "picture" | "pre" | "progress" | "q" | "rp" | "rt" | "ruby" | "s" | "samp" | "script" | "section" | "select" | "slot" | "small" | "source" | "span" | "strong" | "style" | "sub" | "summary" | "sup" | "table" | "tbody" | "td" | "template" | "textarea" | "tfoot" | "th" | "thead" | "time" | "title" | "tr" | "track" | "u" | "ul" | "var" | "video" | "wbr";
+
+export type CurlUIChildComponent =
+    | string
+    | number
+    | boolean
+    | CurlUIElement
+    | null;
+
+export type CurlUIHtmlTag =
+    | "a"
+    | "abbr"
+    | "address"
+    | "area"
+    | "article"
+    | "aside"
+    | "audio"
+    | "b"
+    | "base"
+    | "bdi"
+    | "bdo"
+    | "blockquote"
+    | "body"
+    | "br"
+    | "button"
+    | "canvas"
+    | "caption"
+    | "cite"
+    | "code"
+    | "col"
+    | "colgroup"
+    | "data"
+    | "datalist"
+    | "dd"
+    | "del"
+    | "details"
+    | "dfn"
+    | "dialog"
+    | "div"
+    | "dl"
+    | "dt"
+    | "em"
+    | "embed"
+    | "fieldset"
+    | "figcaption"
+    | "figure"
+    | "footer"
+    | "form"
+    | "h1"
+    | "h2"
+    | "h3"
+    | "h4"
+    | "h5"
+    | "h6"
+    | "head"
+    | "header"
+    | "hgroup"
+    | "hr"
+    | "html"
+    | "i"
+    | "iframe"
+    | "img"
+    | "input"
+    | "ins"
+    | "kbd"
+    | "label"
+    | "legend"
+    | "li"
+    | "link"
+    | "main"
+    | "map"
+    | "mark"
+    | "menu"
+    | "meta"
+    | "meter"
+    | "nav"
+    | "noscript"
+    | "object"
+    | "ol"
+    | "optgroup"
+    | "option"
+    | "output"
+    | "p"
+    | "picture"
+    | "pre"
+    | "progress"
+    | "q"
+    | "rp"
+    | "rt"
+    | "ruby"
+    | "s"
+    | "samp"
+    | "script"
+    | "section"
+    | "select"
+    | "slot"
+    | "small"
+    | "source"
+    | "span"
+    | "strong"
+    | "style"
+    | "sub"
+    | "summary"
+    | "sup"
+    | "table"
+    | "tbody"
+    | "td"
+    | "template"
+    | "textarea"
+    | "tfoot"
+    | "th"
+    | "thead"
+    | "time"
+    | "title"
+    | "tr"
+    | "track"
+    | "u"
+    | "ul"
+    | "var"
+    | "video"
+    | "wbr";
+
 export type CurlUITag = CurlUIHtmlTag | CurlUIWrappedComponent;
+
 export type CurlUIElementStyleProps = {
     background?: string;
     backgroundAttachment?: string;
@@ -197,8 +336,10 @@ export type CurlUIElementStyleProps = {
     resize?: string;
     verticalAlign?: string;
     userSelect?: string;
+    //
     [key: string]: any;
 };
+
 export type CurlUIElementAttributeProps = {
     accesskey?: string | boolean | number;
     autocapitalize?: string | boolean | number;
@@ -278,6 +419,7 @@ export type CurlUIElementAttributeProps = {
     nomodule?: string | boolean | number;
     referrerpolicy?: string | boolean | number;
 };
+
 export type CurlUIElementEventListenerProps = {
     onafterprint?: Function;
     onanimationcancel?: Function;
@@ -386,5 +528,6 @@ export type CurlUIElementEventListenerProps = {
     onwebkitanimationiteration?: Function;
     onwebkitanimationstart?: Function;
     onwebkittransitionend?: Function;
+    //
     [key: string]: any;
 };
