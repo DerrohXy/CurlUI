@@ -100,7 +100,26 @@ export type CurlUIChildComponent =
     | CurlUIElement
     | null;
 
+export type CurlUISvgTag =
+    | string
+    | "svg"
+    | "path"
+    | "circle"
+    | "ellipse"
+    | "line"
+    | "polygon"
+    | "polyline"
+    | "rect"
+    | "g"
+    | "title"
+    | "defs"
+    | "clipPath"
+    | "stop"
+    | "linearGradient"
+    | "radialGradient";
+
 export type CurlUIHtmlTag =
+    | CurlUISvgTag
     | "a"
     | "abbr"
     | "address"
