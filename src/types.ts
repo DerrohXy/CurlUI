@@ -54,6 +54,7 @@ export type CurlUIWrappedComponent = CurlUIComponentProps & {
 
 export interface CurlUIComponent {
     (props: CurlUIElementProps): CurlUIRenderElement;
+    //
 }
 
 export type CurlUIComponentInstance = CurlUIElement &

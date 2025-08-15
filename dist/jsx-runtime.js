@@ -21,12 +21,15 @@ function _withProps(type, props, key) {
         return CreateElement(type, props);
     }
 }
+function _withoutProps(type, key) {
+    return CreateElement(type, {});
+}
 export function jsx(type, props, key) {
     if (props) {
         return _withProps(type, props, key);
     }
     else {
-        return CreateElement(type, {});
+        return _withoutProps(type, key);
     }
 }
 export const jsxs = jsx;

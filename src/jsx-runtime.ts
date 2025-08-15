@@ -3,6 +3,8 @@ import {
     CurlUITag,
     CurlUIRenderElement,
     CurlUIElementProps,
+    CurlUIWrappedComponent,
+    CurlUIComponent,
 } from "./types";
 
 type CurlUIJSXProps = CurlUIElementProps & {
@@ -53,6 +55,10 @@ function _withProps(
     }
 }
 
+function _withoutProps(type: CurlUITag, key?: any): CurlUIRenderElement {
+    return CreateElement(type, {});
+}
+
 export function jsx(
     type: CurlUITag,
     props?: CurlUIJSXProps,
@@ -61,7 +67,7 @@ export function jsx(
     if (props) {
         return _withProps(type, props, key);
     } else {
-        return CreateElement(type, {});
+        return _withoutProps(type, key);
     }
 }
 
@@ -73,8 +79,6 @@ declare global {
             [tag in CurlUIHtmlTag]: CurlUIElementProps;
         };
 
-        interface ElementClass {
-            render: () => CurlUIRenderElement;
-        }
+        type ElementClass = CurlUITag;
     }
 }

@@ -14,9 +14,7 @@ declare global {
         type IntrinsicElements = {
             [tag in CurlUIHtmlTag]: CurlUIElementProps;
         };
-        interface ElementClass {
-            render: () => CurlUIRenderElement;
-        }
+        type ElementClass = CurlUITag;
     }
 }
 export {};
