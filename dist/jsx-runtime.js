@@ -1,28 +1,34 @@
 import { CreateElement } from "./index";
-function _withChildren(type, props, key) {
-    var _a;
-    if (Array.isArray(props.children)) {
-        return CreateElement(type, props, ...props.children.map((child) => {
-            return jsx(child.type, child.props, child.key);
-        }));
-    }
-    else if ((_a = props.children) === null || _a === void 0 ? void 0 : _a.type) {
-        return CreateElement(type, props, jsx(props.children.type, props.children.props, props.children.key));
+function _parseChild(child) {
+    if (child.type) {
+        return jsx(child.type, child.props, child.key);
     }
     else {
-        return CreateElement(type, props, `${props.children}`);
+        return child;
+    }
+}
+function _withChildren(type, props, key) {
+    if (Array.isArray(props.children)) {
+        return CreateElement(type, props, ...props.children.map((child) => {
+            return _parseChild(child);
+        }));
+    }
+    else {
+        return CreateElement(type, props, _parseChild(props.children));
     }
 }
 function _withProps(type, props, key) {
-    if (props.children) {
-        return _withChildren(type, props, key);
+    if (typeof type === "function") {
+        return type(props);
     }
     else {
-        return CreateElement(type, props);
+        return props.children
+            ? _withChildren(type, props, key)
+            : CreateElement(type, props);
     }
 }
 function _withoutProps(type, key) {
-    return CreateElement(type, {});
+    return typeof type === "string" ? CreateElement(type, {}) : type({});
 }
 export function jsx(type, props, key) {
     if (props) {

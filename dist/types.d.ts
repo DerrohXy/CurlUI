@@ -1,4 +1,10 @@
-export type CurlUIElement = {
+export type CurlUIElementHookProps = {
+    mounting?: () => any;
+    mounted?: () => any;
+    unmounting?: () => any;
+    unmounted?: () => any;
+};
+export type CurlUIElement = CurlUIElementHookProps & {
     isElement: boolean;
     elementId: string;
     element: CurlUINativeElement;
@@ -7,13 +13,9 @@ export type CurlUIElement = {
     setParent: (parent: CurlUIElement | HTMLElement | null) => void;
     __mounted__: boolean;
     _mounting_: () => void;
-    mounting?: () => any;
     _mounted_: () => void;
-    mounted?: () => any;
     _unmounting_: () => void;
-    unmounting?: () => any;
     _unmounted_: () => void;
-    unmounted?: () => any;
 };
 export type CurlUIElementProps = CurlUIElementAttributeProps & CurlUIElementEventListenerProps & {
     className?: string;
@@ -24,16 +26,14 @@ export type CurlUIElementProps = CurlUIElementAttributeProps & CurlUIElementEven
 export type CurlUIElementState = {
     [key: string]: any;
 };
-export type CurlUIComponentProps = {
+export type CurlUIComponentHookProps = CurlUIElementHookProps & {
+    updating?: () => any;
+    updated?: () => any;
+};
+export type CurlUIComponentProps = CurlUIComponentHookProps & {
     getInitialState?: () => CurlUIElementState;
     getDefaultProps?: () => CurlUIElementProps;
     update?: (currentState: CurlUIElementState, newState: CurlUIElementState) => boolean;
-    updating?: () => any;
-    updated?: () => any;
-    mounting?: () => any;
-    mounted?: () => any;
-    unmounting?: () => any;
-    unmounted?: () => any;
     render: () => CurlUIRenderElement;
     [key: string]: any;
 };
@@ -41,9 +41,9 @@ export type CurlUIWrappedComponent = CurlUIComponentProps & {
     isComponent: boolean;
     componentId: string;
 };
-export interface CurlUIComponent {
+export type CurlUIComponent = {
     (props: CurlUIElementProps): CurlUIRenderElement;
-}
+};
 export type CurlUIComponentInstance = CurlUIElement & CurlUIWrappedComponent & {
     state: CurlUIElementState;
     props: CurlUIElementProps;
@@ -76,7 +76,7 @@ export type CurlUIStore = {
 export type CurlUIChildComponent = string | number | boolean | CurlUIElement | null;
 export type CurlUISvgTag = string | "svg" | "path" | "circle" | "ellipse" | "line" | "polygon" | "polyline" | "rect" | "g" | "title" | "defs" | "clipPath" | "stop" | "linearGradient" | "radialGradient";
 export type CurlUIHtmlTag = CurlUISvgTag | "a" | "abbr" | "address" | "area" | "article" | "aside" | "audio" | "b" | "base" | "bdi" | "bdo" | "blockquote" | "body" | "br" | "button" | "canvas" | "caption" | "cite" | "code" | "col" | "colgroup" | "data" | "datalist" | "dd" | "del" | "details" | "dfn" | "dialog" | "div" | "dl" | "dt" | "em" | "embed" | "fieldset" | "figcaption" | "figure" | "footer" | "form" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "head" | "header" | "hgroup" | "hr" | "html" | "i" | "iframe" | "img" | "input" | "ins" | "kbd" | "label" | "legend" | "li" | "link" | "main" | "map" | "mark" | "menu" | "meta" | "meter" | "nav" | "noscript" | "object" | "ol" | "optgroup" | "option" | "output" | "p" | "picture" | "pre" | "progress" | "q" | "rp" | "rt" | "ruby" | "s" | "samp" | "script" | "section" | "select" | "slot" | "small" | "source" | "span" | "strong" | "style" | "sub" | "summary" | "sup" | "table" | "tbody" | "td" | "template" | "textarea" | "tfoot" | "th" | "thead" | "time" | "title" | "tr" | "track" | "u" | "ul" | "var" | "video" | "wbr";
-export type CurlUITag = CurlUIHtmlTag | CurlUIWrappedComponent;
+export type CurlUITag = CurlUIHtmlTag;
 export type CurlUIElementStyleProps = {
     background?: string;
     backgroundAttachment?: string;

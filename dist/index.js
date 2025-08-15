@@ -311,7 +311,6 @@ function Spread_(items) {
 }
 function CreateElement_(tag, properties, ...children) {
     let spreadChildren = Spread_(children);
-    //
     let loadedChildren = [];
     for (let i = 0; i < spreadChildren.length; ++i) {
         let child = spreadChildren[i];
@@ -328,95 +327,88 @@ function CreateElement_(tag, properties, ...children) {
             }
         }
     }
-    //
-    if (typeof tag === "string") {
-        let element = IsSvgTag_(tag)
-            ? document.createElementNS("http://www.w3.org/2000/svg", tag)
-            : document.createElement(tag), elementWrapper = {
-            isElement: true,
-            elementId: GetUniqueId_(),
-            element: element,
-            parent: null,
-            children: loadedChildren,
-            __mounted__: false,
-            setParent(parent) {
-                this.parent = parent;
-            },
-            _mounting_() {
-                var _a, _b;
-                (_a = this.mounting) === null || _a === void 0 ? void 0 : _a.call(this);
-                (_b = this.children) === null || _b === void 0 ? void 0 : _b.map((child) => {
-                    child._mounting_();
-                });
-            },
-            async _mounted_() {
-                var _a, _b;
-                this.__mounted__ = true;
-                (_a = this.mounted) === null || _a === void 0 ? void 0 : _a.call(this);
-                (_b = this.children) === null || _b === void 0 ? void 0 : _b.map((child) => {
-                    child._mounted_();
-                });
-            },
-            _unmounting_() {
-                var _a, _b;
-                (_a = this.unmounting) === null || _a === void 0 ? void 0 : _a.call(this);
-                (_b = this.children) === null || _b === void 0 ? void 0 : _b.map((child) => {
-                    child._unmounting_();
-                });
-            },
-            async _unmounted_() {
-                var _a, _b;
-                this.__mounted__ = false;
-                (_a = this.unmounted) === null || _a === void 0 ? void 0 : _a.call(this);
-                (_b = this.children) === null || _b === void 0 ? void 0 : _b.map((child) => {
-                    child._unmounted_();
-                });
-            },
-        };
-        if (properties.className) {
-            element.classList.add(properties.className.trim());
-        }
-        if (properties.style) {
-            Object.assign(element.style, properties.style);
-        }
-        if (properties.instanceReference) {
-            properties.instanceReference.instance = element;
-        }
-        Object.keys(properties).map((key) => {
-            if (["instanceReference", "style", "className"].includes(key)) {
-                return;
-            }
-            //
-            if (IsEventListener_(key, properties[key])) {
-                element.addEventListener(key.slice(2).toLowerCase(), properties[key]);
-            }
-            else if (IsValidElementProperty_(key, properties[key])) {
-                try {
-                    element.setAttribute(key, properties[key]);
-                }
-                catch (e) {
-                    //
-                    console.error(e);
-                }
-            }
-        });
-        loadedChildren.map((child) => {
-            child.setParent(elementWrapper);
-            element.appendChild(child.element);
-        });
-        return elementWrapper;
+    let element = IsSvgTag_(tag)
+        ? document.createElementNS("http://www.w3.org/2000/svg", tag)
+        : document.createElement(tag);
+    let elementWrapper = {
+        isElement: true,
+        elementId: GetUniqueId_(),
+        element: element,
+        parent: null,
+        children: loadedChildren,
+        __mounted__: false,
+        setParent(parent) {
+            this.parent = parent;
+        },
+        _mounting_() {
+            var _a, _b;
+            (_a = this.mounting) === null || _a === void 0 ? void 0 : _a.call(this);
+            (_b = this.children) === null || _b === void 0 ? void 0 : _b.map((child) => {
+                child._mounting_();
+            });
+        },
+        async _mounted_() {
+            var _a, _b;
+            this.__mounted__ = true;
+            (_a = this.mounted) === null || _a === void 0 ? void 0 : _a.call(this);
+            (_b = this.children) === null || _b === void 0 ? void 0 : _b.map((child) => {
+                child._mounted_();
+            });
+        },
+        _unmounting_() {
+            var _a, _b;
+            (_a = this.unmounting) === null || _a === void 0 ? void 0 : _a.call(this);
+            (_b = this.children) === null || _b === void 0 ? void 0 : _b.map((child) => {
+                child._unmounting_();
+            });
+        },
+        async _unmounted_() {
+            var _a, _b;
+            this.__mounted__ = false;
+            (_a = this.unmounted) === null || _a === void 0 ? void 0 : _a.call(this);
+            (_b = this.children) === null || _b === void 0 ? void 0 : _b.map((child) => {
+                child._unmounted_();
+            });
+        },
+    };
+    if (properties.className) {
+        element.classList.add(properties.className.trim());
     }
-    else {
-        let wrapper = CreateComponentInstance_(tag, properties);
-        return wrapper;
+    if (properties.style) {
+        Object.assign(element.style, properties.style);
     }
+    if (properties.instanceReference) {
+        properties.instanceReference.instance = element;
+    }
+    Object.keys(properties).map((key) => {
+        if (["instanceReference", "style", "className"].includes(key)) {
+            return;
+        }
+        if (IsEventListener_(key, properties[key])) {
+            element.addEventListener(key.slice(2).toLowerCase(), properties[key]);
+        }
+        else if (IsValidElementProperty_(key, properties[key])) {
+            try {
+                element.setAttribute(key, properties[key]);
+            }
+            catch (e) {
+                //
+                console.error(e);
+            }
+        }
+    });
+    loadedChildren.map((child) => {
+        child.setParent(elementWrapper);
+        element.appendChild(child.element);
+    });
+    return elementWrapper;
 }
 function WrapComponent_(properties) {
     let component = Object.assign(Object.assign({}, properties), { isComponent: true, componentId: GetUniqueId_() });
     return component;
 }
 function CreateComponent_(properties) {
-    let component = Object.assign(Object.assign({}, properties), { isComponent: true, componentId: GetUniqueId_() });
+    let component = WrapComponent_(properties);
     let wrapper = function (props) {
         return CreateComponentInstance_(component, props);
     };
@@ -426,7 +418,7 @@ function CreateComponent_(properties) {
 function CreateComponentInstance_(component, properties) {
     var _a;
     let blankElement = CreateElement_("div", {});
-    let instance = Object.assign(Object.assign(Object.assign({}, component), blankElement), { instanceId: GetUniqueId_(), state: {}, props: {}, getState() {
+    let instance = Object.assign(Object.assign(Object.assign({}, blankElement), component), { instanceId: GetUniqueId_(), state: {}, props: {}, getState() {
             return this.state;
         },
         getProps() {
@@ -515,12 +507,8 @@ function Store_(state) {
         },
     };
 }
-// EXPORTS
 export function CreateElement(tag, properties, ...children) {
     return CreateElement_(tag, properties, ...children);
-}
-export function WrapComponent(properties) {
-    return WrapComponent_(properties);
 }
 export function CreateComponent(properties) {
     return CreateComponent_(properties);

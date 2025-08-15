@@ -7,8 +7,14 @@ import {
     CurlUIComponent,
 } from "./types";
 
+type CurlUIJSXTag = CurlUITag | CurlUIComponent;
+
+type CurlUIJSXChild = CurlUIJSXParameters | CurlUIRenderElement;
+
+type CurlUIJSXChildren = CurlUIJSXChild | Array<CurlUIJSXChild>;
+
 type CurlUIJSXProps = CurlUIElementProps & {
-    children?: CurlUIJSXParameters | Array<CurlUIJSXParameters>;
+    children?: CurlUIJSXChildren;
 };
 
 type CurlUIJSXParameters = {
@@ -18,6 +24,14 @@ type CurlUIJSXParameters = {
 };
 
 import { CreateElement } from "./index";
+
+function _parseChild(child: any) {
+    if (child.type) {
+        return jsx(child.type, child.props, child.key);
+    } else {
+        return child;
+    }
+}
 
 function _withChildren(
     type: CurlUITag,
@@ -29,38 +43,34 @@ function _withChildren(
             type,
             props,
             ...props.children.map((child) => {
-                return jsx(child.type, child.props, child.key);
+                return _parseChild(child);
             })
         );
-    } else if (props.children?.type) {
-        return CreateElement(
-            type,
-            props,
-            jsx(props.children.type, props.children.props, props.children.key)
-        );
     } else {
-        return CreateElement(type, props, `${props.children}`);
+        return CreateElement(type, props, _parseChild(props.children));
     }
 }
 
 function _withProps(
-    type: CurlUITag,
+    type: CurlUIJSXTag,
     props: CurlUIJSXProps,
     key?: any
 ): CurlUIRenderElement {
-    if (props.children) {
-        return _withChildren(type, props, key);
+    if (typeof type === "function") {
+        return type(props);
     } else {
-        return CreateElement(type, props);
+        return props.children
+            ? _withChildren(type, props, key)
+            : CreateElement(type, props);
     }
 }
 
-function _withoutProps(type: CurlUITag, key?: any): CurlUIRenderElement {
-    return CreateElement(type, {});
+function _withoutProps(type: CurlUIJSXTag, key?: any): CurlUIRenderElement {
+    return typeof type === "string" ? CreateElement(type, {}) : type({});
 }
 
 export function jsx(
-    type: CurlUITag,
+    type: CurlUIJSXTag,
     props?: CurlUIJSXProps,
     key?: any
 ): CurlUIRenderElement {
@@ -79,6 +89,6 @@ declare global {
             [tag in CurlUIHtmlTag]: CurlUIElementProps;
         };
 
-        type ElementClass = CurlUITag;
+        type ElementClass = CurlUIComponent;
     }
 }
