@@ -414,6 +414,10 @@ function CreateElement_(
         element.classList.add(properties.className.trim());
     }
 
+    if (properties.class) {
+        element.classList.add(properties.class.toString().trim());
+    }
+
     if (properties.style) {
         Object.assign(element.style, properties.style);
     }
