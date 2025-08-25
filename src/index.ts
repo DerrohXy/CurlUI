@@ -339,6 +339,7 @@ function Spread_(items: Array<any>): Array<any> {
             spread.push(x);
         }
     });
+
     return spread;
 }
 
@@ -348,7 +349,7 @@ function CreateElement_(
     ...children: Array<CurlUIChildComponent>
 ): CurlUIRenderElement {
     let spreadChildren: Array<CurlUIChildComponent> = Spread_(children);
-    //
+
     let loadedChildren: Array<CurlUIElement> = [];
     for (let i = 0; i < spreadChildren.length; ++i) {
         let child: CurlUIChildComponent = spreadChildren[i];
@@ -366,85 +367,91 @@ function CreateElement_(
             }
         }
     }
-    //
-    if (typeof tag === "string") {
-        let element: HTMLElement | SVGElement = IsSvgTag_(tag)
-                ? document.createElementNS("http://www.w3.org/2000/svg", tag)
-                : document.createElement(tag),
-            elementWrapper: CurlUIElement = {
-                isElement: true,
-                elementId: GetUniqueId_(),
-                element: element,
-                parent: null,
-                children: loadedChildren,
-                __mounted__: false,
-                setParent(parent) {
-                    this.parent = parent;
-                },
-                _mounting_() {
-                    this.mounting?.();
-                    this.children?.map((child) => {
-                        child._mounting_();
-                    });
-                },
-                async _mounted_() {
-                    this.__mounted__ = true;
-                    this.mounted?.();
-                    this.children?.map((child) => {
-                        child._mounted_();
-                    });
-                },
-                _unmounting_() {
-                    this.unmounting?.();
-                    this.children?.map((child) => {
-                        child._unmounting_();
-                    });
-                },
-                async _unmounted_() {
-                    this.__mounted__ = false;
-                    this.unmounted?.();
-                    this.children?.map((child) => {
-                        child._unmounted_();
-                    });
-                },
-            };
-        if (properties.className) {
-            element.classList.add(properties.className.trim());
-        }
-        if (properties.style) {
-            Object.assign(element.style, properties.style);
-        }
-        if (properties.instanceReference) {
-            properties.instanceReference.instance = element;
-        }
-        Object.keys(properties).map((key) => {
-            if (["instanceReference", "style", "className"].includes(key)) {
-                return;
-            }
-            //
-            if (IsEventListener_(key, properties[key])) {
-                element.addEventListener(
-                    key.slice(2).toLowerCase(),
-                    properties[key]
-                );
-            } else if (IsValidElementProperty_(key, properties[key])) {
-                try {
-                    element.setAttribute(key, properties[key]);
-                } catch (e) {
-                    //
-                    console.error(e);
-                }
-            }
-        });
-        loadedChildren.map((child) => {
-            child.setParent(elementWrapper);
-            element.appendChild(child.element);
-        });
-        return elementWrapper;
-    } else {
-        let wrapper = CreateComponentInstance_(tag, properties);
-        return wrapper;
+
+    let element: HTMLElement | SVGElement = IsSvgTag_(tag)
+        ? document.createElementNS("http://www.w3.org/2000/svg", tag)
+        : document.createElement(tag);
+
+    let elementWrapper: CurlUIElement = {
+        isElement: true,
+        elementId: GetUniqueId_(),
+        element: element,
+        parent: null,
+        children: loadedChildren,
+        __mounted__: false,
+        setParent(parent) {
+            this.parent = parent;
+        },
+        _mounting_() {
+            this.mounting?.();
+            this.children?.map((child) => {
+                child._mounting_();
+            });
+        },
+        async _mounted_() {
+            this.__mounted__ = true;
+            this.mounted?.();
+            this.children?.map((child) => {
+                child._mounted_();
+            });
+        },
+        _unmounting_() {
+            this.unmounting?.();
+            this.children?.map((child) => {
+                child._unmounting_();
+            });
+        },
+        async _unmounted_() {
+            this.__mounted__ = false;
+            this.unmounted?.();
+            this.children?.map((child) => {
+                child._unmounted_();
+            });
+        },
+    };
+
+    if (properties.className) {
+        element.classList.add(properties.className.trim());
     }
+
+    if (properties.class) {
+        element.classList.add(properties.class.toString().trim());
+    }
+
+    if (properties.style) {
+        Object.assign(element.style, properties.style);
+    }
+
+    if (properties.instanceReference) {
+        properties.instanceReference.instance = element;
+    }
+
+    Object.keys(properties).map((key) => {
+        if (["instanceReference", "style", "className"].includes(key)) {
+            return;
+        }
+
+        if (IsEventListener_(key, properties[key])) {
+            element.addEventListener(
+                key.slice(2).toLowerCase(),
+                properties[key]
+            );
+        } else if (IsValidElementProperty_(key, properties[key])) {
+            try {
+                element.setAttribute(key, properties[key]);
+            } catch (e) {
+                //
+                console.error(e);
+            }
+        }
+    });
+
+    loadedChildren.map((child) => {
+        child.setParent(elementWrapper);
+        element.appendChild(child.element);
+    });
+
+    return elementWrapper;
 }
 
 function WrapComponent_(
@@ -459,12 +466,10 @@ function WrapComponent_(
 }
 
 function CreateComponent_(properties: CurlUIComponentProps): CurlUIComponent {
-    let component: CurlUIWrappedComponent = {
-        ...properties,
-        isComponent: true,
-        componentId: GetUniqueId_(),
-    };
-    let wrapper = function (props: CurlUIElementProps): CurlUIRenderElement {
+    let component: CurlUIWrappedComponent = WrapComponent_(properties);
+    let wrapper: CurlUIComponent = function (
+        props: CurlUIElementProps
+    ): CurlUIRenderElement {
         return CreateComponentInstance_(component, props);
     };
     Object.assign(wrapper, component);
@@ -476,9 +481,10 @@ function CreateComponentInstance_(
     properties: CurlUIElementProps
 ): CurlUIComponentInstance {
     let blankElement = CreateElement_("div", {});
+
     let instance: CurlUIComponentInstance = {
-        ...component,
         ...blankElement,
+        ...component,
         instanceId: GetUniqueId_(),
         state: {},
         props: {},
@@ -497,30 +503,39 @@ function CreateComponentInstance_(
                 update = this.update
                     ? this.update(previousState, newState)
                     : true;
+
             this.state = newState;
+
             if (update === true) {
                 try {
                     this.updating?.();
                     let previousHtmlElement = this.element,
                         newComponent: CurlUIRenderElement = this.render();
+
                     this.children?.map((child) => {
                         child._unmounting_();
                     });
+
                     newComponent.children?.map((child) => {
                         child._mounting_();
                     });
+
                     previousHtmlElement.replaceWith(newComponent.element);
+
                     this.children?.map((child) => {
                         child._unmounted_();
                     });
+
                     Object.assign(this, {
                         element: newComponent.element,
                         children: newComponent.children,
                     });
+
                     this.children?.map((child) => {
                         child.setParent(this);
                         child._mounted_();
                     });
+
                     this.updated?.();
                 } catch (e) {
                     console.error(e);
@@ -538,18 +553,23 @@ function CreateComponentInstance_(
             Object.assign(this, this.render());
         },
     };
+
     instance.initialize();
     if (properties.instanceReference?.isInstanceReference) {
         properties.instanceReference.instance = instance;
     }
+
     return instance;
 }
 
 function Render_(element: CurlUIRenderElement, htmlElement: HTMLElement) {
     element.setParent(htmlElement);
     htmlElement.innerHTML = "";
+
     element._mounting_();
+
     htmlElement.appendChild(element.element);
+
     element._mounted_();
 }
 
@@ -587,20 +607,12 @@ function Store_(state: CurlUIStoreState): CurlUIStore {
     };
 }
 
-// EXPORTS
-
 export function CreateElement(
     tag: CurlUITag,
     properties: CurlUIElementProps,
     ...children: Array<CurlUIChildComponent>
 ) {
     return CreateElement_(tag, properties, ...children);
-}
-
-export function WrapComponent(
-    properties: CurlUIComponentProps
-): CurlUIWrappedComponent {
-    return WrapComponent_(properties);
 }
 
 export function CreateComponent(

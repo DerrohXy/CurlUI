@@ -1,4 +1,11 @@
-export type CurlUIElement = {
+export type CurlUIElementHookProps = {
+    mounting?: () => any;
+    mounted?: () => any;
+    unmounting?: () => any;
+    unmounted?: () => any;
+};
+
+export type CurlUIElement = CurlUIElementHookProps & {
     isElement: boolean;
     elementId: string;
     element: CurlUINativeElement;
@@ -7,13 +14,9 @@ export type CurlUIElement = {
     setParent: (parent: CurlUIElement | HTMLElement | null) => void;
     __mounted__: boolean;
     _mounting_: () => void;
-    mounting?: () => any;
     _mounted_: () => void;
-    mounted?: () => any;
     _unmounting_: () => void;
-    unmounting?: () => any;
     _unmounted_: () => void;
-    unmounted?: () => any;
 };
 
 export type CurlUIElementProps = CurlUIElementAttributeProps &
@@ -29,19 +32,18 @@ export type CurlUIElementState = {
     [key: string]: any;
 };
 
-export type CurlUIComponentProps = {
+export type CurlUIComponentHookProps = CurlUIElementHookProps & {
+    updating?: () => any;
+    updated?: () => any;
+};
+
+export type CurlUIComponentProps = CurlUIComponentHookProps & {
     getInitialState?: () => CurlUIElementState;
     getDefaultProps?: () => CurlUIElementProps;
     update?: (
         currentState: CurlUIElementState,
         newState: CurlUIElementState
     ) => boolean;
-    updating?: () => any;
-    updated?: () => any;
-    mounting?: () => any;
-    mounted?: () => any;
-    unmounting?: () => any;
-    unmounted?: () => any;
     render: () => CurlUIRenderElement;
     //
     [key: string]: any;
@@ -52,9 +54,10 @@ export type CurlUIWrappedComponent = CurlUIComponentProps & {
     componentId: string;
 };
 
-export interface CurlUIComponent {
+export type CurlUIComponent = {
     (props: CurlUIElementProps): CurlUIRenderElement;
-}
+    //
+};
 
 export type CurlUIComponentInstance = CurlUIElement &
     CurlUIWrappedComponent & {
@@ -100,7 +103,26 @@ export type CurlUIChildComponent =
     | CurlUIElement
     | null;
 
+export type CurlUISvgTag =
+    | string
+    | "svg"
+    | "path"
+    | "circle"
+    | "ellipse"
+    | "line"
+    | "polygon"
+    | "polyline"
+    | "rect"
+    | "g"
+    | "title"
+    | "defs"
+    | "clipPath"
+    | "stop"
+    | "linearGradient"
+    | "radialGradient";
+
 export type CurlUIHtmlTag =
+    | CurlUISvgTag
     | "a"
     | "abbr"
     | "address"
@@ -213,7 +235,7 @@ export type CurlUIHtmlTag =
     | "video"
     | "wbr";
 
-export type CurlUITag = CurlUIHtmlTag | CurlUIWrappedComponent;
+export type CurlUITag = CurlUIHtmlTag;
 
 export type CurlUIElementStyleProps = {
     background?: string;
