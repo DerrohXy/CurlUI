@@ -26,6 +26,10 @@ type CurlUIJSXParameters = {
 import { CreateElement } from "./index";
 
 function _parseChild(child: any) {
+    if (!child) {
+        return null;
+    }
+
     if (child.type) {
         return jsx(child.type, child.props, child.key);
     } else {
@@ -39,15 +43,19 @@ function _withChildren(
     key?: any
 ): CurlUIRenderElement {
     if (Array.isArray(props.children)) {
-        return CreateElement(
-            type,
-            props,
-            ...props.children.map((child) => {
-                return _parseChild(child);
-            })
-        );
+        let parsedChildren_ = props.children.map((child) => {
+            return _parseChild(child);
+        });
+
+        delete props.children;
+
+        return CreateElement(type, props, ...parsedChildren_);
     } else {
-        return CreateElement(type, props, _parseChild(props.children));
+        let parsedChild_ = _parseChild(props.children);
+
+        delete props.children;
+
+        return CreateElement(type, props, parsedChild_);
     }
 }
 

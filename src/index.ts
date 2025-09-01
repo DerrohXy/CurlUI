@@ -353,6 +353,7 @@ function CreateElement_(
     ...children: Array<CurlUIChildComponent>
 ): CurlUIRenderElement {
     let spreadChildren: Array<CurlUIChildComponent> = Spread_(children);
+
     if (properties.children) {
         if (Array.isArray(properties.children)) {
             spreadChildren = Spread_([
@@ -373,6 +374,7 @@ function CreateElement_(
 
     for (let i = 0; i < spreadChildren.length; ++i) {
         let child: CurlUIChildComponent = spreadChildren[i];
+
         if (
             typeof child === "string" ||
             typeof child === "number" ||
