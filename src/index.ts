@@ -14,9 +14,11 @@ import {
 
 function GetUniqueId_(): string {
     let x = 0;
+
     for (let q = 0; q < 10; ++q) {
         x += Date.now() * Math.random();
     }
+
     return x.toString().replace(".", "");
 }
 
@@ -212,6 +214,7 @@ function IsValidElementProperty_(key: string, value: any): boolean {
     if (ValidElementAttributes_.includes(key) || key.startsWith("data-")) {
         return typeof value !== "function" && typeof value !== "object";
     }
+
     return false;
 }
 
@@ -332,6 +335,7 @@ function IsEventListener_(key: string, value: any) {
 
 function Spread_(items: Array<any>): Array<any> {
     let spread: Array<any> = [];
+
     items.map((x) => {
         if (Array.isArray(x)) {
             spread = spread.concat(Spread_(x));
@@ -349,8 +353,24 @@ function CreateElement_(
     ...children: Array<CurlUIChildComponent>
 ): CurlUIRenderElement {
     let spreadChildren: Array<CurlUIChildComponent> = Spread_(children);
+    if (properties.children) {
+        if (Array.isArray(properties.children)) {
+            spreadChildren = Spread_([
+                ...spreadChildren,
+                ...Spread_(properties.children),
+            ]);
+        } else {
+            spreadChildren = Spread_([
+                ...spreadChildren,
+                ...Spread_([properties.children]),
+            ]);
+        }
+
+        delete properties.children;
+    }
 
     let loadedChildren: Array<CurlUIElement> = [];
+
     for (let i = 0; i < spreadChildren.length; ++i) {
         let child: CurlUIChildComponent = spreadChildren[i];
         if (
@@ -360,6 +380,7 @@ function CreateElement_(
         ) {
             let wrapped: CurlUIElement = CreateElement_("span", {});
             wrapped.element.textContent = child.toString();
+
             loadedChildren.push(wrapped);
         } else {
             if (child) {
@@ -462,17 +483,21 @@ function WrapComponent_(
         isComponent: true,
         componentId: GetUniqueId_(),
     };
+
     return component;
 }
 
 function CreateComponent_(properties: CurlUIComponentProps): CurlUIComponent {
     let component: CurlUIWrappedComponent = WrapComponent_(properties);
+
     let wrapper: CurlUIComponent = function (
         props: CurlUIElementProps
     ): CurlUIRenderElement {
         return CreateComponentInstance_(component, props);
     };
+
     Object.assign(wrapper, component);
+
     return wrapper;
 }
 
@@ -549,7 +574,9 @@ function CreateComponentInstance_(
                       ...properties,
                   }
                 : properties;
+
             this.state = this.getInitialState ? this.getInitialState() : {};
+
             Object.assign(this, this.render());
         },
     };
@@ -592,6 +619,7 @@ function Store_(state: CurlUIStoreState): CurlUIStore {
                 ...this.state,
                 ...state,
             };
+
             Object.values(this.handlers).map((handler) => {
                 handler(this.state);
             });
@@ -599,6 +627,7 @@ function Store_(state: CurlUIStoreState): CurlUIStore {
         subscribe(handler: Function): string {
             let handlerId = GetUniqueId_();
             this.handlers[handlerId] = handler;
+
             return handlerId;
         },
         unsubscribe(handlerId: string) {

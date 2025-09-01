@@ -24,6 +24,7 @@ export type CurlUIElementProps = CurlUIElementAttributeProps &
         className?: string;
         style?: CurlUIElementStyleProps;
         instanceReference?: CurlUIInstanceReference;
+        children?: Array<CurlUIChildComponent> | CurlUIChildComponent;
         //
         [key: string]: any;
     };
