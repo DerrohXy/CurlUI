@@ -12,6 +12,10 @@ import {
     CurlUIStoreState,
 } from "./types";
 
+/**
+ * Generates a supposedly unique string.
+ * @returns A "unique" string : I HAVE NO GUARANTEE FOR THIS. It just happens to be sufficient for this case.
+ */
 function GetUniqueId_(): string {
     let x = 0;
 
@@ -22,6 +26,11 @@ function GetUniqueId_(): string {
     return x.toString().replace(".", "");
 }
 
+/**
+ * Checks if an element tag is an svg tag
+ * @param tag The tag to check
+ * @returns Whether its an svg tag
+ */
 function IsSvgTag_(tag: string = ""): boolean {
     return [
         "svg",
@@ -35,6 +44,10 @@ function IsSvgTag_(tag: string = ""): boolean {
     ].includes(tag);
 }
 
+/**
+ * Allowed element attributes.
+ * Used to check valid vlues when creating an HTML element.
+ */
 const ValidElementAttributes_ = [
     // Global Attributes
     "accesskey",
@@ -210,6 +223,12 @@ const ValidElementAttributes_ = [
     "xmlns",
 ];
 
+/**
+ * Checks if an element property(its name and value), are valid HTML element attributes.
+ * @param key Name of the attribute
+ * @param value Value of the attribute
+ * @returns Whether it is a valid attribute.
+ */
 function IsValidElementProperty_(key: string, value: any): boolean {
     if (ValidElementAttributes_.includes(key) || key.startsWith("data-")) {
         return typeof value !== "function" && typeof value !== "object";
@@ -218,6 +237,9 @@ function IsValidElementProperty_(key: string, value: any): boolean {
     return false;
 }
 
+/**
+ * Allowed event names for HTML elements.
+ */
 const Events_: Array<string> = [
     "onabort",
     "onafterprint",
@@ -329,10 +351,21 @@ const Events_: Array<string> = [
     "onwebkittransitionend",
 ];
 
+/**
+ * Checks if an attribute(name and value), are valid event listeners.
+ * @param key Name of the event listender
+ * @param value Listener function.
+ * @returns
+ */
 function IsEventListener_(key: string, value: any) {
     return Events_.includes(key.toLowerCase()) && typeof value == "function";
 }
 
+/**
+ * Flattens an array, makes sure no child objects are nested arrays.
+ * @param items The array to flatten
+ * @returns The flattened array.
+ */
 function Spread_(items: Array<any>): Array<any> {
     let spread: Array<any> = [];
 
@@ -347,6 +380,13 @@ function Spread_(items: Array<any>): Array<any> {
     return spread;
 }
 
+/**
+ * Creates a CurlUIRenderElement, a wrapper oven an element CurlUI can render on the DOM.
+ * @param tag The element tag
+ * @param properties Attributes to assign to the element
+ * @param children The elements child elements.
+ * @returns A CurlUIRenderElement.
+ */
 function CreateElement_(
     tag: CurlUITag,
     properties: CurlUIElementProps,
@@ -477,6 +517,11 @@ function CreateElement_(
     return elementWrapper;
 }
 
+/**
+ * Wraps a custom component creation properties.
+ * @param properties The component creation properties.
+ * @returns The wrapped component template
+ */
 function WrapComponent_(
     properties: CurlUIComponentProps
 ): CurlUIWrappedComponent {
@@ -489,6 +534,11 @@ function WrapComponent_(
     return component;
 }
 
+/**
+ * Generates a function for custom element creation. From a wrapped custom component properties.
+ * @param properties The custom component's properties.
+ * @returns An element constructor function that takes props.
+ */
 function CreateComponent_(properties: CurlUIComponentProps): CurlUIComponent {
     let component: CurlUIWrappedComponent = WrapComponent_(properties);
 
@@ -503,6 +553,12 @@ function CreateComponent_(properties: CurlUIComponentProps): CurlUIComponent {
     return wrapper;
 }
 
+/**
+ * Creates a component instance from a custom component's properties.
+ * @param component The wrapped component
+ * @param properties Props to pass to the custom component's constructor.
+ * @returns A component instance, which is renderable to the DOM
+ */
 function CreateComponentInstance_(
     component: CurlUIWrappedComponent,
     properties: CurlUIElementProps
@@ -591,6 +647,11 @@ function CreateComponentInstance_(
     return instance;
 }
 
+/**
+ * Actually renders a renderable CurlUI element to the DOM element specified
+ * @param element
+ * @param htmlElement
+ */
 function Render_(element: CurlUIRenderElement, htmlElement: HTMLElement) {
     element.setParent(htmlElement);
     htmlElement.innerHTML = "";
@@ -602,6 +663,10 @@ function Render_(element: CurlUIRenderElement, htmlElement: HTMLElement) {
     element._mounted_();
 }
 
+/**
+ * Constructor function for an instanceReference handle that can be used to externally refer to a component instance
+ * @returns
+ */
 function InstanceReference_() {
     return {
         isInstanceReference: true,
@@ -609,6 +674,12 @@ function InstanceReference_() {
     };
 }
 
+/**
+ * Constructor for a CurlUIStore,a watchable properties object,
+ * listeners can be bound to it for each time the state of the store chages.
+ * @param state The initial state of the store.
+ * @returns The store object.
+ */
 function Store_(state: CurlUIStoreState): CurlUIStore {
     return {
         state: state,
@@ -638,6 +709,13 @@ function Store_(state: CurlUIStoreState): CurlUIStore {
     };
 }
 
+/**
+ * Creates a CurlUIRenderElement, a wrapper oven an element CurlUI can render on the DOM.
+ * @param tag The element tag
+ * @param properties Attributes to assign to the element
+ * @param children The elements child elements.
+ * @returns A CurlUIRenderElement.
+ */
 export function CreateElement(
     tag: CurlUITag,
     properties: CurlUIElementProps,
@@ -646,16 +724,30 @@ export function CreateElement(
     return CreateElement_(tag, properties, ...children);
 }
 
+/**
+ * Generates a function for custom element creation. From a wrapped custom component properties.
+ * @param properties The custom component's properties.
+ * @returns An element constructor function that takes props.
+ */
 export function CreateComponent(
     properties: CurlUIComponentProps
 ): CurlUIComponent {
     return CreateComponent_(properties);
 }
 
+/**
+ * Constructor function for an instanceReference handle that can be used to externally refer to a component instance
+ * @returns
+ */
 export function InstanceReference() {
     return InstanceReference_();
 }
 
+/**
+ * Actually renders a renderable CurlUI element to the DOM element specified
+ * @param element
+ * @param htmlElement
+ */
 export function Render(
     element: CurlUIRenderElement,
     htmlElement: HTMLElement
@@ -663,6 +755,12 @@ export function Render(
     return Render_(element, htmlElement);
 }
 
+/**
+ * Constructor for a CurlUIStore,a watchable properties object,
+ * listeners can be bound to it for each time the state of the store chages.
+ * @param state The initial state of the store.
+ * @returns The store object.
+ */
 export function Store(defaultState: CurlUIStoreState): CurlUIStore {
     return Store_(defaultState);
 }
