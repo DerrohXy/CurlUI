@@ -22,7 +22,7 @@ export type CurlUIElement = CurlUIElementHookProps & {
 export type CurlUIElementProps = CurlUIElementAttributeProps &
     CurlUIElementEventListenerProps & {
         className?: string;
-        style?: CurlUIElementStyleProps;
+        style?: CurlUICSSProps;
         instanceReference?: CurlUIInstanceReference;
         children?: Array<CurlUIChildComponent> | CurlUIChildComponent;
         //
@@ -238,7 +238,7 @@ export type CurlUIHtmlTag =
 
 export type CurlUITag = CurlUIHtmlTag;
 
-export type CurlUIElementStyleProps = {
+export type CurlUICSSProps = {
     background?: string;
     backgroundAttachment?: string;
     backgroundColor?: string;
