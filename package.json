@@ -23,7 +23,6 @@
         "build": "tsc"
     },
     "keywords": [],
-    "author": "",
     "license": "MIT",
     "devDependencies": {
         "typescript": "^5.9.2"
