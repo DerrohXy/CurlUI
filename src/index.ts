@@ -10,6 +10,7 @@ import {
     CurlUIComponent,
     CurlUIStore,
     CurlUIStoreState,
+    CurlUINativeElement,
 } from "./types";
 
 /**
@@ -389,7 +390,7 @@ function Spread_(items: Array<any>): Array<any> {
  */
 function CreateElement_(
     tag: CurlUITag,
-    properties: CurlUIElementProps,
+    properties: CurlUIElementProps<CurlUINativeElement>,
     ...children: Array<CurlUIChildComponent>
 ): CurlUIRenderElement {
     let spreadChildren: Array<CurlUIChildComponent> = Spread_(children);
@@ -543,7 +544,7 @@ function CreateComponent_(properties: CurlUIComponentProps): CurlUIComponent {
     let component: CurlUIWrappedComponent = WrapComponent_(properties);
 
     let wrapper: CurlUIComponent = function (
-        props: CurlUIElementProps
+        props: CurlUIElementProps<CurlUINativeElement>
     ): CurlUIRenderElement {
         return CreateComponentInstance_(component, props);
     };
@@ -561,7 +562,7 @@ function CreateComponent_(properties: CurlUIComponentProps): CurlUIComponent {
  */
 function CreateComponentInstance_(
     component: CurlUIWrappedComponent,
-    properties: CurlUIElementProps
+    properties: CurlUIElementProps<CurlUINativeElement>
 ): CurlUIComponentInstance {
     let blankElement = CreateElement_("div", {});
 
@@ -718,7 +719,7 @@ function Store_(state: CurlUIStoreState): CurlUIStore {
  */
 export function CreateElement(
     tag: CurlUITag,
-    properties: CurlUIElementProps,
+    properties: CurlUIElementProps<CurlUINativeElement>,
     ...children: Array<CurlUIChildComponent>
 ) {
     return CreateElement_(tag, properties, ...children);

@@ -5,6 +5,7 @@ import {
     CurlUIElementProps,
     CurlUIWrappedComponent,
     CurlUIComponent,
+    CurlUINativeElement,
 } from "./types";
 
 type CurlUIJSXTag = CurlUITag | CurlUIComponent;
@@ -13,7 +14,7 @@ type CurlUIJSXChild = CurlUIJSXParameters | CurlUIRenderElement;
 
 type CurlUIJSXChildren = CurlUIJSXChild | Array<CurlUIJSXChild>;
 
-type CurlUIJSXProps = CurlUIElementProps & {
+type CurlUIJSXProps = CurlUIElementProps<CurlUINativeElement> & {
     children?: CurlUIJSXChildren;
 };
 
@@ -94,7 +95,7 @@ export const jsxs = jsx;
 declare global {
     namespace JSX {
         type IntrinsicElements = {
-            [tag in CurlUIHtmlTag]: CurlUIElementProps;
+            [tag in CurlUIHtmlTag]: CurlUIElementProps<CurlUINativeElement>;
         };
 
         type ElementClass = CurlUIComponent;

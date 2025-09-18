@@ -19,15 +19,16 @@ export type CurlUIElement = CurlUIElementHookProps & {
     _unmounted_: () => void;
 };
 
-export type CurlUIElementProps = CurlUIElementAttributeProps &
-    CurlUIElementEventListenerProps & {
-        className?: string;
-        style?: CurlUICSSProps;
-        instanceReference?: CurlUIInstanceReference;
-        children?: Array<CurlUIChildComponent> | CurlUIChildComponent;
-        //
-        [key: string]: any;
-    };
+export type CurlUIElementProps<T extends CurlUINativeElement> =
+    CurlUIElementAttributeProps &
+        CurlUIElementEventListenerProps & {
+            className?: string;
+            style?: CurlUICSSProps;
+            instanceReference?: CurlUIInstanceReference;
+            children?: Array<CurlUIChildComponent> | CurlUIChildComponent;
+            //
+            [key: string]: any;
+        };
 
 export type CurlUIElementState = {
     [key: string]: any;
@@ -40,7 +41,7 @@ export type CurlUIComponentHookProps = CurlUIElementHookProps & {
 
 export type CurlUIComponentProps = CurlUIComponentHookProps & {
     getInitialState?: () => CurlUIElementState;
-    getDefaultProps?: () => CurlUIElementProps;
+    getDefaultProps?: () => CurlUIElementProps<CurlUINativeElement>;
     update?: (
         currentState: CurlUIElementState,
         newState: CurlUIElementState
@@ -56,17 +57,17 @@ export type CurlUIWrappedComponent = CurlUIComponentProps & {
 };
 
 export type CurlUIComponent = {
-    (props: CurlUIElementProps): CurlUIRenderElement;
+    (props: CurlUIElementProps<CurlUINativeElement>): CurlUIRenderElement;
     //
 };
 
 export type CurlUIComponentInstance = CurlUIElement &
     CurlUIWrappedComponent & {
         state: CurlUIElementState;
-        props: CurlUIElementProps;
+        props: CurlUIElementProps<CurlUINativeElement>;
         setState(state: CurlUIElementState): void;
         getState(): CurlUIElementState;
-        getProps(): CurlUIElementProps;
+        getProps(): CurlUIElementProps<CurlUINativeElement>;
         initialize(): void;
         //
         [key: string]: any;
