@@ -1,8 +1,11 @@
 {
     "compilerOptions": {
-        "target": "ES2017",
+        "target": "ES6",
         "module": "NodeNext",
-        "lib": ["DOM", "ESNext"],
+        "lib": [
+            "DOM",
+            "ESNext"
+        ],
         "declaration": true,
         "outDir": "./dist",
         "strict": true,
@@ -13,5 +16,7 @@
         "jsx": "react-jsx",
         "jsxImportSource": "./src"
     },
-    "include": ["src"]
+    "include": [
+        "src"
+    ]
 }
