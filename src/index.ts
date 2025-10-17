@@ -391,7 +391,7 @@ function Spread_(items: Array<any>): Array<any> {
 function CreateElement_(
     tag: CurlUITag,
     properties: CurlUIElementProps<CurlUINativeElement>,
-    ...children: Array<CurlUIChildComponent>
+    ...children: Array<CurlUIChildComponent | Array<CurlUIChildComponent>>
 ): CurlUIRenderElement {
     let spreadChildren: Array<CurlUIChildComponent> = Spread_(children);
 
@@ -449,27 +449,27 @@ function CreateElement_(
         _mounting_() {
             this.mounting?.();
             this.children?.map((child) => {
-                child._mounting_();
+                child._mounting_.bind(child)();
             });
         },
         async _mounted_() {
             this.__mounted__ = true;
             this.mounted?.();
             this.children?.map((child) => {
-                child._mounted_();
+                child._mounted_.bind(child)();
             });
         },
         _unmounting_() {
             this.unmounting?.();
             this.children?.map((child) => {
-                child._unmounting_();
+                child._unmounting_.bind(child)();
             });
         },
         async _unmounted_() {
             this.__mounted__ = false;
             this.unmounted?.();
             this.children?.map((child) => {
-                child._unmounted_();
+                child._unmounted_.bind(child)();
             });
         },
     };
@@ -597,17 +597,17 @@ function CreateComponentInstance_(
                         newComponent: CurlUIRenderElement = this.render();
 
                     this.children?.map((child) => {
-                        child._unmounting_();
+                        child._unmounting_.bind(child)();
                     });
 
                     newComponent.children?.map((child) => {
-                        child._mounting_();
+                        child._mounting_.bind(child)();
                     });
 
                     previousHtmlElement.replaceWith(newComponent.element);
 
                     this.children?.map((child) => {
-                        child._unmounted_();
+                        child._unmounted_.bind(child)();
                     });
 
                     Object.assign(this, {
@@ -617,7 +617,7 @@ function CreateComponentInstance_(
 
                     this.children?.map((child) => {
                         child.setParent(this);
-                        child._mounted_();
+                        child._mounted_.bind(child)();
                     });
 
                     this.updated?.();
