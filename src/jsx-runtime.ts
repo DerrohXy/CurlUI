@@ -3,7 +3,6 @@ import {
     CurlUITag,
     CurlUIRenderElement,
     CurlUIElementProps,
-    CurlUIWrappedComponent,
     CurlUIComponent,
     CurlUINativeElement,
 } from "./types";

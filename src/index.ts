@@ -720,7 +720,7 @@ function Store_(state: CurlUIStoreState): CurlUIStore {
 export function CreateElement(
     tag: CurlUITag,
     properties: CurlUIElementProps<CurlUINativeElement>,
-    ...children: Array<CurlUIChildComponent>
+    ...children: Array<CurlUIChildComponent | Array<CurlUIChildComponent>>
 ) {
     return CreateElement_(tag, properties, ...children);
 }

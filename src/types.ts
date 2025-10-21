@@ -238,210 +238,409 @@ export type CurlUIHtmlTag =
     | "wbr";
 
 export type CurlUITag = CurlUIHtmlTag;
-
 export type CurlUICSSProps = {
+    // Background
     background?: string;
-    backgroundAttachment?: string;
+    backgroundAttachment?: "scroll" | "fixed" | "local" | string;
     backgroundColor?: string;
     backgroundImage?: string;
     backgroundPosition?: string;
-    backgroundRepeat?: string;
+    backgroundRepeat?:
+        | "repeat"
+        | "repeat-x"
+        | "repeat-y"
+        | "no-repeat"
+        | string;
+
+    // Border
     border?: string;
     borderBottom?: string;
     borderBottomColor?: string;
-    borderBottomStyle?: string;
+    borderBottomStyle?:
+        | "none"
+        | "hidden"
+        | "dotted"
+        | "dashed"
+        | "solid"
+        | "double"
+        | "groove"
+        | "ridge"
+        | "inset"
+        | "outset"
+        | string;
     borderBottomWidth?: string;
     borderColor?: string;
     borderLeft?: string;
     borderLeftColor?: string;
-    borderLeftStyle?: string;
+    borderLeftStyle?:
+        | "none"
+        | "hidden"
+        | "dotted"
+        | "dashed"
+        | "solid"
+        | "double"
+        | "groove"
+        | "ridge"
+        | "inset"
+        | "outset"
+        | string;
     borderLeftWidth?: string;
     borderRadius?: string;
     borderRight?: string;
     borderRightColor?: string;
-    borderRightStyle?: string;
+    borderRightStyle?:
+        | "none"
+        | "hidden"
+        | "dotted"
+        | "dashed"
+        | "solid"
+        | "double"
+        | "groove"
+        | "ridge"
+        | "inset"
+        | "outset"
+        | string;
     borderRightWidth?: string;
-    borderStyle?: string;
+    borderStyle?:
+        | "none"
+        | "hidden"
+        | "dotted"
+        | "dashed"
+        | "solid"
+        | "double"
+        | "groove"
+        | "ridge"
+        | "inset"
+        | "outset"
+        | string;
     borderTop?: string;
     borderTopColor?: string;
-    borderTopStyle?: string;
+    borderTopStyle?:
+        | "none"
+        | "hidden"
+        | "dotted"
+        | "dashed"
+        | "solid"
+        | "double"
+        | "groove"
+        | "ridge"
+        | "inset"
+        | "outset"
+        | string;
     borderTopWidth?: string;
     borderWidth?: string;
+
+    // Box & Display
     boxShadow?: string;
-    boxSizing?: string;
-    clear?: string;
-    display?: string;
-    float?: string;
-    height?: string;
-    width?: string;
-    margin?: string;
-    marginBottom?: string;
-    marginLeft?: string;
-    marginRight?: string;
-    marginTop?: string;
-    maxHeight?: string;
-    maxWidth?: string;
-    minHeight?: string;
-    minWidth?: string;
-    padding?: string;
-    paddingBottom?: string;
-    paddingLeft?: string;
-    paddingRight?: string;
-    paddingTop?: string;
-    overflow?: string;
-    overflowX?: string;
-    overflowY?: string;
-    visibility?: string;
-    position?: string;
+    boxSizing?: "border-box" | "content-box" | string;
+    clear?: "none" | "left" | "right" | "both" | string;
+    display?:
+        | "none"
+        | "block"
+        | "inline"
+        | "inline-block"
+        | "flex"
+        | "grid"
+        | "inline-flex"
+        | "inline-grid"
+        | "contents"
+        | "list-item"
+        | "table"
+        | "table-row"
+        | "table-cell"
+        | string;
+    float?: "none" | "left" | "right" | "inline-start" | "inline-end" | string;
+
+    // Position
+    position?: "static" | "relative" | "absolute" | "fixed" | "sticky" | string;
     top?: string;
     right?: string;
     bottom?: string;
     left?: string;
-    zIndex?: string;
+    zIndex?: number | string;
+
+    // Overflow
+    overflow?: "visible" | "hidden" | "scroll" | "auto" | string;
+    overflowX?: "visible" | "hidden" | "scroll" | "auto" | string;
+    overflowY?: "visible" | "hidden" | "scroll" | "auto" | string;
+
+    // Visibility
+    visibility?: "visible" | "hidden" | "collapse" | string;
+
+    // Typography
     color?: string;
-    font?: string;
     fontFamily?: string;
     fontSize?: string;
-    fontStyle?: string;
+    fontStyle?: "normal" | "italic" | "oblique" | string;
     fontVariant?: string;
-    fontWeight?: string;
+    fontWeight?:
+        | "normal"
+        | "bold"
+        | "bolder"
+        | "lighter"
+        | "100"
+        | "200"
+        | "300"
+        | "400"
+        | "500"
+        | "600"
+        | "700"
+        | "800"
+        | "900"
+        | string;
     letterSpacing?: string;
     lineHeight?: string;
-    textAlign?: string;
-    textDecoration?: string;
-    textIndent?: string;
-    textOverflow?: string;
-    textShadow?: string;
-    textTransform?: string;
-    whiteSpace?: string;
-    wordSpacing?: string;
-    wordWrap?: string;
-    alignContent?: string;
-    alignItems?: string;
-    alignSelf?: string;
-    flex?: string;
-    flexBasis?: string;
-    flexDirection?: string;
-    flexFlow?: string;
-    flexGrow?: string;
-    flexShrink?: string;
-    flexWrap?: string;
-    justifyContent?: string;
-    gap?: string;
-    grid?: string;
-    gridArea?: string;
-    gridColumn?: string;
-    gridRow?: string;
-    gridTemplate?: string;
-    transform?: string;
-    transformOrigin?: string;
-    transition?: string;
-    transitionDelay?: string;
-    transitionDuration?: string;
-    transitionProperty?: string;
-    transitionTimingFunction?: string;
-    animation?: string;
-    animationDelay?: string;
-    animationDirection?: string;
-    animationDuration?: string;
-    animationFillMode?: string;
-    animationIterationCount?: string;
-    animationName?: string;
-    animationPlayState?: string;
-    animationTimingFunction?: string;
-    clip?: string;
-    cursor?: string;
-    opacity?: string;
-    outline?: string;
-    outlineColor?: string;
-    outlineStyle?: string;
-    outlineWidth?: string;
-    pointerEvents?: string;
-    resize?: string;
-    verticalAlign?: string;
-    userSelect?: string;
-    //
+    textAlign?:
+        | "left"
+        | "right"
+        | "center"
+        | "justify"
+        | "start"
+        | "end"
+        | string;
+    textDecoration?:
+        | "none"
+        | "underline"
+        | "overline"
+        | "line-through"
+        | string;
+    textOverflow?: "clip" | "ellipsis" | string;
+    textTransform?: "none" | "capitalize" | "uppercase" | "lowercase" | string;
+    whiteSpace?: "normal" | "nowrap" | "pre" | "pre-line" | "pre-wrap" | string;
+
+    // Flex
+    alignItems?:
+        | "stretch"
+        | "center"
+        | "flex-start"
+        | "flex-end"
+        | "baseline"
+        | string;
+    alignContent?:
+        | "stretch"
+        | "center"
+        | "flex-start"
+        | "flex-end"
+        | "space-between"
+        | "space-around"
+        | string;
+    alignSelf?:
+        | "auto"
+        | "stretch"
+        | "center"
+        | "flex-start"
+        | "flex-end"
+        | "baseline"
+        | string;
+    justifyContent?:
+        | "flex-start"
+        | "flex-end"
+        | "center"
+        | "space-between"
+        | "space-around"
+        | "space-evenly"
+        | string;
+    flexDirection?:
+        | "row"
+        | "row-reverse"
+        | "column"
+        | "column-reverse"
+        | string;
+    flexWrap?: "nowrap" | "wrap" | "wrap-reverse" | string;
+
+    // Cursor
+    cursor?:
+        | "auto"
+        | "default"
+        | "pointer"
+        | "wait"
+        | "text"
+        | "move"
+        | "not-allowed"
+        | "crosshair"
+        | "zoom-in"
+        | "zoom-out"
+        | string;
+
+    // Animation
+    animationDirection?:
+        | "normal"
+        | "reverse"
+        | "alternate"
+        | "alternate-reverse"
+        | string;
+    animationFillMode?: "none" | "forwards" | "backwards" | "both" | string;
+    animationPlayState?: "running" | "paused" | string;
+    animationTimingFunction?:
+        | "ease"
+        | "linear"
+        | "ease-in"
+        | "ease-out"
+        | "ease-in-out"
+        | string;
+
+    // Misc
+    opacity?: string | number;
+    pointerEvents?:
+        | "auto"
+        | "none"
+        | "visiblePainted"
+        | "visibleFill"
+        | "visibleStroke"
+        | "visible"
+        | "painted"
+        | "fill"
+        | "stroke"
+        | "all"
+        | string;
+    resize?: "none" | "both" | "horizontal" | "vertical" | string;
+    userSelect?: "auto" | "text" | "none" | "contain" | "all" | string;
+
+    // Any unknown props
     [key: string]: any;
 };
 
 export type CurlUIElementAttributeProps = {
-    accesskey?: string | boolean | number;
-    autocapitalize?: string | boolean | number;
-    class?: string | boolean | number;
-    contenteditable?: string | boolean | number;
-    contextmenu?: string | boolean | number;
-    dir?: string | boolean | number;
-    draggable?: string | boolean | number;
-    enterkeyhint?: string | boolean | number;
-    hidden?: string | boolean | number;
-    id?: string | boolean | number;
-    inputmode?: string | boolean | number;
-    is?: string | boolean | number;
-    lang?: string | boolean | number;
-    nonce?: string | boolean | number;
-    part?: string | boolean | number;
-    slot?: string | boolean | number;
-    spellcheck?: string | boolean | number;
-    tabindex?: string | boolean | number;
-    title?: string | boolean | number;
-    translate?: string | boolean | number;
-    accept?: string | boolean | number;
-    action?: string | boolean | number;
-    autofocus?: string | boolean | number;
-    autocomplete?: string | boolean | number;
-    checked?: string | boolean | number;
-    cols?: string | boolean | number;
-    dirname?: string | boolean | number;
-    disabled?: string | boolean | number;
-    form?: string | boolean | number;
-    formaction?: string | boolean | number;
-    formenctype?: string | boolean | number;
-    formmethod?: string | boolean | number;
-    formnovalidate?: string | boolean | number;
-    formtarget?: string | boolean | number;
-    list?: string | boolean | number;
-    max?: string | boolean | number;
-    maxlength?: string | boolean | number;
-    min?: string | boolean | number;
-    minlength?: string | boolean | number;
-    method?: string | boolean | number;
-    multiple?: string | boolean | number;
-    name?: string | boolean | number;
-    novalidate?: string | boolean | number;
-    pattern?: string | boolean | number;
-    placeholder?: string | boolean | number;
-    readonly?: string | boolean | number;
-    required?: string | boolean | number;
-    rows?: string | boolean | number;
-    selected?: string | boolean | number;
-    size?: string | boolean | number;
-    step?: string | boolean | number;
-    value?: string | boolean | number;
-    wrap?: string | boolean | number;
-    alt?: string | boolean | number;
-    autoplay?: string | boolean | number;
-    controls?: string | boolean | number;
-    height?: string | boolean | number;
-    loop?: string | boolean | number;
-    muted?: string | boolean | number;
-    poster?: string | boolean | number;
-    preload?: string | boolean | number;
-    width?: string | boolean | number;
-    download?: string | boolean | number;
-    href?: string | boolean | number;
-    hreflang?: string | boolean | number;
-    media?: string | boolean | number;
-    ping?: string | boolean | number;
-    rel?: string | boolean | number;
-    target?: string | boolean | number;
-    async?: string | boolean | number;
-    defer?: string | boolean | number;
-    src?: string | boolean | number;
-    type?: string | boolean | number;
-    crossorigin?: string | boolean | number;
-    integrity?: string | boolean | number;
-    nomodule?: string | boolean | number;
-    referrerpolicy?: string | boolean | number;
+    // Global attributes
+    accesskey?: string;
+    autocapitalize?:
+        | "off"
+        | "none"
+        | "on"
+        | "sentences"
+        | "words"
+        | "characters"
+        | string;
+    class?: string;
+    contenteditable?: boolean | "true" | "false";
+    contextmenu?: string;
+    dir?: "ltr" | "rtl" | "auto";
+    draggable?: boolean | "true" | "false";
+    enterkeyhint?:
+        | "enter"
+        | "done"
+        | "go"
+        | "next"
+        | "previous"
+        | "search"
+        | "send"
+        | string;
+    hidden?: boolean | "true" | "false";
+    id?: string;
+    inputmode?:
+        | "none"
+        | "text"
+        | "decimal"
+        | "numeric"
+        | "tel"
+        | "search"
+        | "email"
+        | "url"
+        | string;
+    is?: string;
+    lang?: string;
+    nonce?: string;
+    part?: string;
+    slot?: string;
+    spellcheck?: boolean | "true" | "false";
+    tabindex?: number | string;
+    title?: string;
+    translate?: "yes" | "no";
+
+    // Form-related attributes
+    accept?: string;
+    action?: string;
+    autofocus?: boolean | "true" | "false";
+    autocomplete?: "on" | "off" | string;
+    checked?: boolean | "true" | "false";
+    cols?: number | string;
+    dirname?: string;
+    disabled?: boolean | "true" | "false";
+    form?: string;
+    formaction?: string;
+    formenctype?:
+        | "application/x-www-form-urlencoded"
+        | "multipart/form-data"
+        | "text/plain"
+        | string;
+    formmethod?: "get" | "post" | "dialog" | string;
+    formnovalidate?: boolean | "true" | "false";
+    formtarget?: "_self" | "_blank" | "_parent" | "_top" | string;
+    list?: string;
+    max?: string | number;
+    maxlength?: number | string;
+    min?: string | number;
+    minlength?: number | string;
+    method?: "get" | "post" | "dialog" | string;
+    multiple?: boolean | "true" | "false";
+    name?: string;
+    novalidate?: boolean | "true" | "false";
+    pattern?: string;
+    placeholder?: string;
+    readonly?: boolean | "true" | "false";
+    required?: boolean | "true" | "false";
+    rows?: number | string;
+    selected?: boolean | "true" | "false";
+    size?: number | string;
+    step?: number | string;
+    value?: string | number;
+    wrap?: "hard" | "soft" | "off" | string;
+
+    // Media-related attributes
+    alt?: string;
+    autoplay?: boolean | "true" | "false";
+    controls?: boolean | "true" | "false";
+    height?: string | number;
+    loop?: boolean | "true" | "false";
+    muted?: boolean | "true" | "false";
+    poster?: string;
+    preload?: "none" | "metadata" | "auto" | string;
+    width?: string | number;
+
+    // Anchor & link-related
+    download?: boolean | string;
+    href?: string;
+    hreflang?: string;
+    media?: string;
+    ping?: string;
+    rel?:
+        | "alternate"
+        | "author"
+        | "bookmark"
+        | "external"
+        | "help"
+        | "license"
+        | "next"
+        | "nofollow"
+        | "noopener"
+        | "noreferrer"
+        | "prev"
+        | "search"
+        | "tag"
+        | string;
+    target?: "_self" | "_blank" | "_parent" | "_top" | string;
+
+    // Script attributes
+    async?: boolean | "true" | "false";
+    defer?: boolean | "true" | "false";
+    src?: string;
+    type?: string;
+    crossorigin?: "anonymous" | "use-credentials" | string;
+    integrity?: string;
+    nomodule?: boolean | "true" | "false";
+    referrerpolicy?:
+        | "no-referrer"
+        | "no-referrer-when-downgrade"
+        | "origin"
+        | "origin-when-cross-origin"
+        | "same-origin"
+        | "strict-origin"
+        | "strict-origin-when-cross-origin"
+        | "unsafe-url"
+        | string;
+
+    // Allow any other attribute or custom prop
+    [key: string]: any;
 };
 
 export type CurlUIElementEventListenerProps = {
