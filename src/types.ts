@@ -350,6 +350,10 @@ export type CurlUICSSProps = {
         | "table-cell"
         | string;
     float?: "none" | "left" | "right" | "inline-start" | "inline-end" | string;
+    width?: string;
+    height?: string;
+    minWidth?: string;
+    minHeight?: string;
 
     // Position
     position?: "static" | "relative" | "absolute" | "fixed" | "sticky" | string;
