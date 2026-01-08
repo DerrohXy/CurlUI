@@ -354,6 +354,18 @@ export type CurlUICSSProps = {
     height?: string;
     minWidth?: string;
     minHeight?: string;
+    maxWidth?: string;
+    maxHeight?: string;
+    padding?: string;
+    paddingTop?: string;
+    paddingLeft?: string;
+    paddingBottom?: string;
+    paddingRight?: string;
+    margin?: string;
+    marginTop?: string;
+    marginLeft?: string;
+    marginRight?: string;
+    marginBottom?: string;
 
     // Position
     position?: "static" | "relative" | "absolute" | "fixed" | "sticky" | string;

@@ -578,17 +578,22 @@ function CreateComponentInstance_(
         getProps() {
             return this.props;
         },
-        setState(state) {
+        setState(state, skipUpdate = false) {
             let previousState = this.getState(),
                 newState = {
                     ...previousState,
                     ...state,
-                },
-                update = this.update
-                    ? this.update(previousState, newState)
-                    : true;
+                };
 
             this.state = newState;
+
+            if (skipUpdate) {
+                return;
+            }
+
+            let update = this.update
+                ? this.update(previousState, newState)
+                : true;
 
             if (update === true) {
                 try {
