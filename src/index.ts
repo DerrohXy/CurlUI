@@ -475,11 +475,29 @@ function CreateElement_(
     };
 
     if (properties.className) {
-        element.classList.add(properties.className.trim());
+        let classes = properties.className
+            .split(" ")
+            .map((t) => {
+                return t.trim();
+            })
+            .filter((t) => {
+                return t.length > 0;
+            });
+
+        element.classList.add(...classes);
     }
 
     if (properties.class) {
-        element.classList.add(properties.class.toString().trim());
+        let classes = properties.class
+            .split(" ")
+            .map((t) => {
+                return t.trim();
+            })
+            .filter((t) => {
+                return t.length > 0;
+            });
+
+        element.classList.add(...classes);
     }
 
     if (properties.style) {
@@ -491,7 +509,9 @@ function CreateElement_(
     }
 
     Object.keys(properties).map((key) => {
-        if (["instanceReference", "style", "className"].includes(key)) {
+        if (
+            ["instanceReference", "style", "className", "class"].includes(key)
+        ) {
             return;
         }
 
