@@ -44,7 +44,7 @@ export type CurlUIComponentProps = CurlUIComponentHookProps & {
     getDefaultProps?: () => CurlUIElementProps<CurlUINativeElement>;
     update?: (
         currentState: CurlUIElementState,
-        newState: CurlUIElementState
+        newState: CurlUIElementState,
     ) => boolean;
     render: () => CurlUIRenderElement;
     //
@@ -79,6 +79,8 @@ export type CurlUIInstanceReference = {
 };
 
 export type CurlUIRenderElement = CurlUIElement | CurlUIComponentInstance;
+export type CurlUINode = CurlUIRenderElement;
+
 export type CurlUINativeElement = HTMLElement | SVGElement;
 
 export type CurlUIStoreState = {
@@ -463,6 +465,7 @@ export type CurlUICSSProps = {
         | "column-reverse"
         | string;
     flexWrap?: "nowrap" | "wrap" | "wrap-reverse" | string;
+    flexGrow?: string;
 
     // Cursor
     cursor?:
