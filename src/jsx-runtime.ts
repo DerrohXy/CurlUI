@@ -1,19 +1,21 @@
 import {
-    CurlUIHtmlTag,
+    HtmlTag,
     CurlUITag,
-    CurlUIRenderElement,
-    CurlUIElementProps,
-    CurlUIComponent,
-    CurlUINativeElement,
+    RenderElement,
+    ElementProps,
+    Component,
+    NativeElement,
 } from "./types";
 
-type CurlUIJSXTag = CurlUITag | CurlUIComponent;
+type Props = { [key: string]: any };
 
-type CurlUIJSXChild = CurlUIJSXParameters | CurlUIRenderElement;
+type CurlUIJSXTag = CurlUITag | Component<Props>;
+
+type CurlUIJSXChild = CurlUIJSXParameters | RenderElement;
 
 type CurlUIJSXChildren = CurlUIJSXChild | Array<CurlUIJSXChild>;
 
-type CurlUIJSXProps = CurlUIElementProps<CurlUINativeElement> & {
+type CurlUIJSXProps = ElementProps<NativeElement> & {
     children?: CurlUIJSXChildren;
 };
 
@@ -50,8 +52,8 @@ function _parseChild(child: any) {
 function _withChildren(
     type: CurlUITag,
     props: CurlUIJSXProps,
-    key?: any
-): CurlUIRenderElement {
+    key?: any,
+): RenderElement {
     if (Array.isArray(props.children)) {
         let parsedChildren_ = props.children.map((child) => {
             return _parseChild(child);
@@ -79,8 +81,8 @@ function _withChildren(
 function _withProps(
     type: CurlUIJSXTag,
     props: CurlUIJSXProps,
-    key?: any
-): CurlUIRenderElement {
+    key?: any,
+): RenderElement {
     if (typeof type === "function") {
         return type(props);
     } else {
@@ -96,7 +98,7 @@ function _withProps(
  * @param key
  * @returns
  */
-function _withoutProps(type: CurlUIJSXTag, key?: any): CurlUIRenderElement {
+function _withoutProps(type: CurlUIJSXTag, key?: any): RenderElement {
     return typeof type === "string" ? CreateElement(type, {}) : type({});
 }
 
@@ -110,8 +112,8 @@ function _withoutProps(type: CurlUIJSXTag, key?: any): CurlUIRenderElement {
 export function jsx(
     type: CurlUIJSXTag,
     props?: CurlUIJSXProps,
-    key?: any
-): CurlUIRenderElement {
+    key?: any,
+): RenderElement {
     if (props) {
         return _withProps(type, props, key);
     } else {
@@ -124,9 +126,9 @@ export const jsxs = jsx;
 declare global {
     namespace JSX {
         type IntrinsicElements = {
-            [tag in CurlUIHtmlTag]: CurlUIElementProps<CurlUINativeElement>;
+            [tag in HtmlTag]: ElementProps<NativeElement>;
         };
 
-        type ElementClass = CurlUIComponent;
+        type ElementClass = Component<Props>;
     }
 }

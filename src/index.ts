@@ -1,17 +1,20 @@
 import {
     CurlUITag,
-    CurlUIElementProps,
-    CurlUIChildComponent,
-    CurlUIRenderElement,
+    ElementProps,
+    ChildComponent,
+    RenderElement,
     CurlUIElement,
-    CurlUIComponentProps,
-    CurlUIWrappedComponent,
-    CurlUIComponentInstance,
-    CurlUIComponent,
+    ComponentProps,
+    WrappedComponent,
+    ComponentInstance,
+    Component,
     CurlUIStore,
-    CurlUIStoreState,
-    CurlUINativeElement,
+    StoreState,
+    NativeElement,
+    InstanceReference,
 } from "./types";
+
+type Props = { [key: string]: any };
 
 /**
  * Generates a supposedly unique string.
@@ -20,6 +23,14 @@ import {
  */
 function getUniqueId(): string {
     return crypto.randomUUID();
+}
+
+function toKebabCase(text: string) {
+    return text
+        .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+        .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
+        .replace(/[\s_]+/g, "-")
+        .toLowerCase();
 }
 
 /**
@@ -382,10 +393,8 @@ function spread(items: Array<any>): Array<any> {
  * @param properties The component creation properties.
  * @returns The wrapped component template
  */
-function wrapComponent(
-    properties: CurlUIComponentProps,
-): CurlUIWrappedComponent {
-    let component: CurlUIWrappedComponent = {
+function wrapComponent(properties: ComponentProps): WrappedComponent {
+    let component: WrappedComponent = {
         ...properties,
         isComponent: true,
         componentId: getUniqueId(),
@@ -401,12 +410,12 @@ function wrapComponent(
  * @returns A component instance, which is renderable to the DOM
  */
 function createComponentInstance(
-    component: CurlUIWrappedComponent,
-    properties: CurlUIElementProps<CurlUINativeElement>,
-): CurlUIComponentInstance {
+    component: WrappedComponent,
+    properties: ElementProps<NativeElement>,
+): ComponentInstance {
     let blankElement = CreateElement("div", {});
 
-    let instance: CurlUIComponentInstance = {
+    let instance: ComponentInstance = {
         ...blankElement,
         ...component,
         instanceId: getUniqueId(),
@@ -439,7 +448,7 @@ function createComponentInstance(
                 try {
                     this.updating?.();
                     let previousHtmlElement = this.element,
-                        newComponent: CurlUIRenderElement = this.render();
+                        newComponent: RenderElement = this.render();
 
                     this.children?.map((child) => {
                         child._unmounting_.bind(child)();
@@ -503,10 +512,10 @@ function createComponentInstance(
  */
 export function CreateElement(
     tag: CurlUITag,
-    properties: CurlUIElementProps<CurlUINativeElement>,
-    ...children: Array<CurlUIChildComponent | Array<CurlUIChildComponent>>
+    properties: ElementProps<NativeElement>,
+    ...children: Array<ChildComponent | Array<ChildComponent>>
 ) {
-    let spreadChildren: Array<CurlUIChildComponent> = spread(children);
+    let spreadChildren: Array<ChildComponent> = spread(children);
 
     if (properties.children) {
         if (Array.isArray(properties.children)) {
@@ -527,7 +536,7 @@ export function CreateElement(
     let loadedChildren: Array<CurlUIElement> = [];
 
     for (let i = 0; i < spreadChildren.length; ++i) {
-        let child: CurlUIChildComponent = spreadChildren[i];
+        let child: ChildComponent = spreadChildren[i];
 
         if (
             typeof child === "string" ||
@@ -633,12 +642,24 @@ export function CreateElement(
                 key.slice(2).toLowerCase(),
                 properties[key],
             );
-        } else if (isValidElementProperty(key, properties[key])) {
-            try {
-                element.setAttribute(key, properties[key]);
-            } catch (e) {
-                //
-                console.error(e);
+        } else {
+            if (isValidElementProperty(key, properties[key])) {
+                try {
+                    element.setAttribute(key, properties[key]);
+                } catch (e) {
+                    //
+                    console.error(e);
+                }
+            } else {
+                let key_ = toKebabCase(key);
+                if (isValidElementProperty(key_, properties[key])) {
+                    try {
+                        element.setAttribute(key_, properties[key]);
+                    } catch (e) {
+                        //
+                        console.error(e);
+                    }
+                }
             }
         }
     });
@@ -657,14 +678,12 @@ export function CreateElement(
  * @param properties The custom component's properties.
  * @returns An element constructor function that takes props.
  */
-export function CreateComponent(
-    properties: CurlUIComponentProps,
-): CurlUIComponent {
-    let component: CurlUIWrappedComponent = wrapComponent(properties);
+export function CreateComponent<T extends Props>(
+    properties: ComponentProps,
+): Component<T> {
+    let component: WrappedComponent = wrapComponent(properties);
 
-    let wrapper: CurlUIComponent = function (
-        props: CurlUIElementProps<CurlUINativeElement>,
-    ): CurlUIRenderElement {
+    let wrapper: Component<T> = function (props: T): RenderElement {
         return createComponentInstance(component, props);
     };
 
@@ -678,7 +697,7 @@ export function CreateComponent(
  * used to externally refer to a component instance
  * @returns
  */
-export function InstanceReference() {
+export function InstanceReference(): InstanceReference {
     return {
         isInstanceReference: true,
         instance: null,
@@ -690,10 +709,7 @@ export function InstanceReference() {
  * @param element
  * @param htmlElement
  */
-export function Render(
-    element: CurlUIRenderElement,
-    htmlElement: HTMLElement,
-): void {
+export function Render(element: RenderElement, htmlElement: HTMLElement): void {
     element.setParent(htmlElement);
     htmlElement.innerHTML = "";
 
@@ -710,14 +726,14 @@ export function Render(
  * @param state The initial state of the store.
  * @returns The store object.
  */
-export function Store(defaultState: CurlUIStoreState): CurlUIStore {
+export function Store(defaultState: StoreState): CurlUIStore {
     return {
         state: defaultState,
         handlers: {},
         getState() {
             return this.state;
         },
-        setState(state: CurlUIStoreState) {
+        setState(state: StoreState) {
             this.state = {
                 ...this.state,
                 ...state,

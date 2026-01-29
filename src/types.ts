@@ -1,14 +1,14 @@
-export type CurlUIElementHookProps = {
+export type ElementHookProps = {
     mounting?: () => any;
     mounted?: () => any;
     unmounting?: () => any;
     unmounted?: () => any;
 };
 
-export type CurlUIElement = CurlUIElementHookProps & {
+export type CurlUIElement = ElementHookProps & {
     isElement: boolean;
     elementId: string;
-    element: CurlUINativeElement;
+    element: NativeElement;
     parent?: CurlUIElement | HTMLElement | null;
     children?: Array<CurlUIElement>;
     setParent: (parent: CurlUIElement | HTMLElement | null) => void;
@@ -19,95 +19,85 @@ export type CurlUIElement = CurlUIElementHookProps & {
     _unmounted_: () => void;
 };
 
-export type CurlUIElementProps<T extends CurlUINativeElement> =
-    CurlUIElementAttributeProps &
-        CurlUIElementEventListenerProps & {
-            className?: string;
-            style?: CurlUICSSProps;
-            instanceReference?: CurlUIInstanceReference;
-            children?: Array<CurlUIChildComponent> | CurlUIChildComponent;
-            //
-            [key: string]: any;
-        };
+export type ElementProps<T extends NativeElement> = ElementAttributeProps &
+    ElementEventListenerProps & {
+        className?: string;
+        style?: CSSProps;
+        instanceReference?: InstanceReference;
+        children?: Array<ChildComponent> | ChildComponent;
+        //
+        [key: string]: any;
+    };
 
-export type CurlUIElementState = {
+export type ElementState = {
     [key: string]: any;
 };
 
-export type CurlUIComponentHookProps = CurlUIElementHookProps & {
+export type ComponentHookProps = ElementHookProps & {
     updating?: () => any;
     updated?: () => any;
 };
 
-export type CurlUIComponentProps = CurlUIComponentHookProps & {
-    getInitialState?: () => CurlUIElementState;
-    getDefaultProps?: () => CurlUIElementProps<CurlUINativeElement>;
-    update?: (
-        currentState: CurlUIElementState,
-        newState: CurlUIElementState,
-    ) => boolean;
-    render: () => CurlUIRenderElement;
+export type ComponentProps = ComponentHookProps & {
+    getInitialState?: () => ElementState;
+    getDefaultProps?: () => ElementProps<NativeElement>;
+    update?: (currentState: ElementState, newState: ElementState) => boolean;
+    render: () => RenderElement;
     //
     [key: string]: any;
 };
 
-export type CurlUIWrappedComponent = CurlUIComponentProps & {
+export type WrappedComponent = ComponentProps & {
     isComponent: boolean;
     componentId: string;
 };
 
-export type CurlUIComponent = {
-    (props: CurlUIElementProps<CurlUINativeElement>): CurlUIRenderElement;
+export type Component<T extends {}> = {
+    (props: T): RenderElement;
     //
 };
 
-export type CurlUIComponentInstance = CurlUIElement &
-    CurlUIWrappedComponent & {
-        state: CurlUIElementState;
-        props: CurlUIElementProps<CurlUINativeElement>;
-        setState(state: CurlUIElementState): void;
-        getState(): CurlUIElementState;
-        getProps(): CurlUIElementProps<CurlUINativeElement>;
+export type ComponentInstance = CurlUIElement &
+    WrappedComponent & {
+        state: ElementState;
+        props: ElementProps<NativeElement>;
+        setState(state: ElementState): void;
+        getState(): ElementState;
+        getProps(): ElementProps<NativeElement>;
         initialize(): void;
         //
         [key: string]: any;
     };
 
-export type CurlUIInstanceReference = {
+export type InstanceReference = {
     isInstanceReference: boolean;
-    instance: HTMLElement | SVGElement | CurlUIComponentInstance | null;
+    instance: HTMLElement | SVGElement | ComponentInstance | null;
 };
 
-export type CurlUIRenderElement = CurlUIElement | CurlUIComponentInstance;
-export type CurlUINode = CurlUIRenderElement;
+export type RenderElement = CurlUIElement | ComponentInstance;
 
-export type CurlUINativeElement = HTMLElement | SVGElement;
+export type NativeElement = HTMLElement | SVGElement;
 
-export type CurlUIStoreState = {
+export type StoreState = {
     [key: string]: any;
 };
 
-export type CurlUIStoreHandlers = {
+export type StoreHandlers = {
     [key: string]: Function;
 };
 
 export type CurlUIStore = {
-    state: CurlUIStoreState;
-    handlers: CurlUIStoreHandlers;
-    getState(): CurlUIStoreState;
-    setState(state: CurlUIStoreState): void;
+    state: StoreState;
+    handlers: StoreHandlers;
+    getState(): StoreState;
+    setState(state: StoreState): void;
     subscribe(handler: Function): string;
     unsubscribe(handlerId: string): void;
 };
 
-export type CurlUIChildComponent =
-    | string
-    | number
-    | boolean
-    | CurlUIElement
-    | null;
+export type ChildComponent = string | number | boolean | CurlUIElement | null;
 
-export type CurlUISvgTag =
+export type SvgTag =
     | string
     | "svg"
     | "path"
@@ -125,8 +115,8 @@ export type CurlUISvgTag =
     | "linearGradient"
     | "radialGradient";
 
-export type CurlUIHtmlTag =
-    | CurlUISvgTag
+export type HtmlTag =
+    | SvgTag
     | "a"
     | "abbr"
     | "address"
@@ -239,8 +229,9 @@ export type CurlUIHtmlTag =
     | "video"
     | "wbr";
 
-export type CurlUITag = CurlUIHtmlTag;
-export type CurlUICSSProps = {
+export type CurlUITag = HtmlTag;
+
+export type CSSProps = {
     // Background
     background?: string;
     backgroundAttachment?: "scroll" | "fixed" | "local" | string;
@@ -519,7 +510,7 @@ export type CurlUICSSProps = {
     [key: string]: any;
 };
 
-export type CurlUIElementAttributeProps = {
+export type ElementAttributeProps = {
     // Global attributes
     accesskey?: string;
     autocapitalize?:
@@ -662,7 +653,7 @@ export type CurlUIElementAttributeProps = {
     [key: string]: any;
 };
 
-export type CurlUIElementEventListenerProps = {
+export type ElementEventListenerProps = {
     onafterprint?: Function;
     onanimationcancel?: Function;
     onanimationend?: Function;
