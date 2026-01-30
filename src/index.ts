@@ -52,185 +52,6 @@ function isSvgTag(tag: string = ""): boolean {
 }
 
 /**
- * Allowed element attributes.
- * Used to check valid vlues when creating an HTML element.
- */
-const ValidElementAttributes = [
-    // Global Attributes
-    "accesskey",
-    "autocapitalize",
-    "class",
-    "contenteditable",
-    "contextmenu",
-    "dir",
-    "draggable",
-    "enterkeyhint",
-    "hidden",
-    "id",
-    "inputmode",
-    "is",
-    "lang",
-    "nonce",
-    "part",
-    "slot",
-    "spellcheck",
-    "tabindex",
-    "title",
-    "translate",
-
-    // Form Attributes
-    "accept",
-    "action",
-    "autofocus",
-    "autocomplete",
-    "checked",
-    "cols",
-    "dirname",
-    "disabled",
-    "enctype",
-    "form",
-    "formaction",
-    "formenctype",
-    "formmethod",
-    "formnovalidate",
-    "formtarget",
-    "height",
-    "list",
-    "max",
-    "maxlength",
-    "min",
-    "minlength",
-    "method",
-    "multiple",
-    "name",
-    "novalidate",
-    "pattern",
-    "placeholder",
-    "readonly",
-    "required",
-    "rows",
-    "selected",
-    "size",
-    "src",
-    "step",
-    "type",
-    "value",
-    "width",
-    "wrap",
-
-    // Media Attributes
-    "alt",
-    "autoplay",
-    "controls",
-    "crossorigin",
-    "loop",
-    "muted",
-    "poster",
-    "preload",
-
-    // Anchor and Link Attributes
-    "download",
-    "href",
-    "hreflang",
-    "media",
-    "ping",
-    "referrerpolicy",
-    "rel",
-    "target",
-
-    // Script Attributes
-    "async",
-    "defer",
-    "integrity",
-    "nomodule",
-
-    // Presentation attributes
-    "style",
-    "clip-path",
-    "clip-rule",
-    "color",
-    "color-interpolation",
-    "color-rendering",
-    "cursor",
-    "display",
-    "fill",
-    "fill-opacity",
-    "fill-rule",
-    "filter",
-    "mask",
-    "opacity",
-    "pointer-events",
-    "shape-rendering",
-    "stroke",
-    "stroke-dasharray",
-    "stroke-dashoffset",
-    "stroke-linecap",
-    "stroke-linejoin",
-    "stroke-miterlimit",
-    "stroke-opacity",
-    "stroke-width",
-    "transform",
-    "vector-effect",
-    "visibility",
-
-    // Conditional processing attributes
-    "requiredFeatures",
-    "systemLanguage",
-
-    // Geometry attributes
-    "cx",
-    "cy",
-    "d",
-    "r",
-    "rx",
-    "ry",
-    "x",
-    "x1",
-    "x2",
-    "y",
-    "y1",
-    "y2",
-
-    // Path-specific attributes
-    "pathLength",
-
-    // Text content attributes
-    "font-family",
-    "font-size",
-    "font-weight",
-    "text-anchor",
-    "text-decoration",
-    "dominant-baseline",
-
-    // Gradient and pattern attributes
-    "gradientTransform",
-    "gradientUnits",
-    "patternTransform",
-    "patternUnits",
-    "spreadMethod",
-
-    // Animation attributes
-    "attributeName",
-    "attributeType",
-    "begin",
-    "dur",
-    "end",
-    "repeatCount",
-    "repeatDur",
-    "restart",
-
-    // ARIA attributes
-    "aria-label",
-    "aria-hidden",
-    "role",
-
-    // Other common attributes
-    "viewBox",
-    "preserveAspectRatio",
-    "xmlns",
-];
-
-/**
  * Checks if an element property(its name and value),
  * are valid HTML element attributes.
  * @param key Name of the attribute
@@ -238,11 +59,7 @@ const ValidElementAttributes = [
  * @returns Whether it is a valid attribute.
  */
 function isValidElementProperty(key: string, value: any): boolean {
-    if (ValidElementAttributes.includes(key) || key.startsWith("data-")) {
-        return typeof value !== "function" && typeof value !== "object";
-    }
-
-    return false;
+    return typeof value !== "function" && typeof value !== "object";
 }
 
 /**
@@ -649,16 +466,6 @@ export function CreateElement(
                 } catch (e) {
                     //
                     console.error(e);
-                }
-            } else {
-                let key_ = toKebabCase(key);
-                if (isValidElementProperty(key_, properties[key])) {
-                    try {
-                        element.setAttribute(key_, properties[key]);
-                    } catch (e) {
-                        //
-                        console.error(e);
-                    }
                 }
             }
         }
