@@ -183,12 +183,17 @@ function isEventListener(key: string, value: any) {
  * @param items The array to flatten
  * @returns The flattened array.
  */
-function spread(items: Array<any>): Array<any> {
-    let spread_: Array<any> = [];
+
+function spread<T>(items: Array<T | Array<T>> | T): Array<T> {
+    if (!Array.isArray(items)) {
+        return [items];
+    }
+
+    const spread_: Array<T> = [];
 
     items.map((x) => {
         if (Array.isArray(x)) {
-            spread_ = spread_.concat(spread(x));
+            spread_.push(...spread(x));
         } else {
             spread_.push(x);
         }
@@ -203,7 +208,7 @@ function spread(items: Array<any>): Array<any> {
  * @returns The wrapped component template
  */
 function wrapComponent(properties: ComponentProps): WrappedComponent {
-    let component: WrappedComponent = {
+    const component: WrappedComponent = {
         ...properties,
         isComponent: true,
         componentId: getUniqueId(),
@@ -222,9 +227,9 @@ function createComponentInstance(
     component: WrappedComponent,
     properties: ElementProps<NativeElement>,
 ): ComponentInstance {
-    let blankElement = CreateElement("div", {});
+    const blankElement = CreateElement("div", {});
 
-    let instance: ComponentInstance = {
+    const instance: ComponentInstance = {
         ...blankElement,
         ...component,
         instanceId: getUniqueId(),
@@ -237,7 +242,7 @@ function createComponentInstance(
             return this.props;
         },
         setState(state, skipUpdate = false) {
-            let previousState = this.getState(),
+            const previousState = this.getState(),
                 newState = {
                     ...previousState,
                     ...state,
@@ -256,7 +261,7 @@ function createComponentInstance(
             if (update === true) {
                 try {
                     this.updating?.();
-                    let previousHtmlElement = this.element,
+                    const previousHtmlElement = this.element,
                         newComponent: RenderElement = this.render();
 
                     this.children?.map((child) => {
@@ -324,25 +329,19 @@ export function CreateElement(
     properties: ElementProps<NativeElement>,
     ...children: Array<ChildComponent | Array<ChildComponent>>
 ) {
-    let spreadChildren: Array<ChildComponent> = spread(children);
+    const spreadChildren: Array<ChildComponent> = spread(children);
 
     if (properties.children) {
         if (Array.isArray(properties.children)) {
-            spreadChildren = spread([
-                ...spreadChildren,
-                ...spread(properties.children),
-            ]);
+            spreadChildren.push(...spread(properties.children));
         } else {
-            spreadChildren = spread([
-                ...spreadChildren,
-                ...spread([properties.children]),
-            ]);
+            spreadChildren.push(...spread([properties.children]));
         }
 
         delete properties.children;
     }
 
-    let loadedChildren: Array<CurlUIElement> = [];
+    const loadedChildren: Array<CurlUIElement> = [];
 
     for (let i = 0; i < spreadChildren.length; ++i) {
         let child: ChildComponent = spreadChildren[i];
@@ -363,11 +362,11 @@ export function CreateElement(
         }
     }
 
-    let element: HTMLElement | SVGElement = isSvgTag(tag)
+    const element: HTMLElement | SVGElement = isSvgTag(tag)
         ? document.createElementNS("http://www.w3.org/2000/svg", tag)
         : document.createElement(tag);
 
-    let elementWrapper: CurlUIElement = {
+    const elementWrapper: CurlUIElement = {
         isElement: true,
         elementId: getUniqueId(),
         element: element,
@@ -406,7 +405,7 @@ export function CreateElement(
     };
 
     if (properties.className) {
-        let classes = properties.className
+        const classes = properties.className
             .split(" ")
             .map((t) => {
                 return t.trim();
@@ -419,7 +418,7 @@ export function CreateElement(
     }
 
     if (properties.class) {
-        let classes = properties.class
+        const classes = properties.class
             .split(" ")
             .map((t) => {
                 return t.trim();
@@ -480,9 +479,9 @@ export function CreateElement(
 export function CreateComponent<T extends Props>(
     properties: ComponentProps,
 ): Component<T> {
-    let component: WrappedComponent = wrapComponent(properties);
+    const component: WrappedComponent = wrapComponent(properties);
 
-    let wrapper: Component<T> = function (props: T): RenderElement {
+    const wrapper: Component<T> = function (props: T): RenderElement {
         return createComponentInstance(component, props);
     };
 
@@ -543,7 +542,7 @@ export function Store(defaultState: StoreState): CurlUIStore {
             });
         },
         subscribe(handler: Function): string {
-            let handlerId = getUniqueId();
+            const handlerId = getUniqueId();
             this.handlers[handlerId] = handler;
 
             return handlerId;

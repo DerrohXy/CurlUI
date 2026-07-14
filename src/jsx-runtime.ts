@@ -55,7 +55,7 @@ function _withChildren(
     key?: any,
 ): RenderElement {
     if (Array.isArray(props.children)) {
-        let parsedChildren_ = props.children.map((child) => {
+        const parsedChildren_ = props.children.map((child) => {
             return _parseChild(child);
         });
 
@@ -63,7 +63,7 @@ function _withChildren(
 
         return CreateElement(type, props, ...parsedChildren_);
     } else {
-        let parsedChild_ = _parseChild(props.children);
+        const parsedChild_ = _parseChild(props.children);
 
         delete props.children;
 

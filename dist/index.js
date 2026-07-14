@@ -177,10 +177,13 @@ function isEventListener(key, value) {
  * @returns The flattened array.
  */
 function spread(items) {
-    let spread_ = [];
+    if (!Array.isArray(items)) {
+        return [items];
+    }
+    const spread_ = [];
     items.map((x) => {
         if (Array.isArray(x)) {
-            spread_ = spread_.concat(spread(x));
+            spread_.push(...spread(x));
         }
         else {
             spread_.push(x);
@@ -194,7 +197,7 @@ function spread(items) {
  * @returns The wrapped component template
  */
 function wrapComponent(properties) {
-    let component = Object.assign(Object.assign({}, properties), { isComponent: true, componentId: getUniqueId() });
+    const component = Object.assign(Object.assign({}, properties), { isComponent: true, componentId: getUniqueId() });
     return component;
 }
 /**
@@ -205,8 +208,8 @@ function wrapComponent(properties) {
  */
 function createComponentInstance(component, properties) {
     var _a;
-    let blankElement = CreateElement("div", {});
-    let instance = Object.assign(Object.assign(Object.assign({}, blankElement), component), { instanceId: getUniqueId(), state: {}, props: {}, getState() {
+    const blankElement = CreateElement("div", {});
+    const instance = Object.assign(Object.assign(Object.assign({}, blankElement), component), { instanceId: getUniqueId(), state: {}, props: {}, getState() {
             return this.state;
         },
         getProps() {
@@ -214,7 +217,7 @@ function createComponentInstance(component, properties) {
         },
         setState(state, skipUpdate = false) {
             var _a, _b, _c, _d, _e, _f;
-            let previousState = this.getState(), newState = Object.assign(Object.assign({}, previousState), state);
+            const previousState = this.getState(), newState = Object.assign(Object.assign({}, previousState), state);
             this.state = newState;
             if (skipUpdate) {
                 return;
@@ -225,7 +228,7 @@ function createComponentInstance(component, properties) {
             if (update === true) {
                 try {
                     (_a = this.updating) === null || _a === void 0 ? void 0 : _a.call(this);
-                    let previousHtmlElement = this.element, newComponent = this.render();
+                    const previousHtmlElement = this.element, newComponent = this.render();
                     (_b = this.children) === null || _b === void 0 ? void 0 : _b.map((child) => {
                         child._unmounting_.bind(child)();
                     });
@@ -272,23 +275,17 @@ function createComponentInstance(component, properties) {
  * @returns A CurlUIRenderElement.
  */
 function CreateElement(tag, properties, ...children) {
-    let spreadChildren = spread(children);
+    const spreadChildren = spread(children);
     if (properties.children) {
         if (Array.isArray(properties.children)) {
-            spreadChildren = spread([
-                ...spreadChildren,
-                ...spread(properties.children),
-            ]);
+            spreadChildren.push(...spread(properties.children));
         }
         else {
-            spreadChildren = spread([
-                ...spreadChildren,
-                ...spread([properties.children]),
-            ]);
+            spreadChildren.push(...spread([properties.children]));
         }
         delete properties.children;
     }
-    let loadedChildren = [];
+    const loadedChildren = [];
     for (let i = 0; i < spreadChildren.length; ++i) {
         let child = spreadChildren[i];
         if (typeof child === "string" ||
@@ -304,10 +301,10 @@ function CreateElement(tag, properties, ...children) {
             }
         }
     }
-    let element = isSvgTag(tag)
+    const element = isSvgTag(tag)
         ? document.createElementNS("http://www.w3.org/2000/svg", tag)
         : document.createElement(tag);
-    let elementWrapper = {
+    const elementWrapper = {
         isElement: true,
         elementId: getUniqueId(),
         element: element,
@@ -353,7 +350,7 @@ function CreateElement(tag, properties, ...children) {
         },
     };
     if (properties.className) {
-        let classes = properties.className
+        const classes = properties.className
             .split(" ")
             .map((t) => {
             return t.trim();
@@ -364,7 +361,7 @@ function CreateElement(tag, properties, ...children) {
         element.classList.add(...classes);
     }
     if (properties.class) {
-        let classes = properties.class
+        const classes = properties.class
             .split(" ")
             .map((t) => {
             return t.trim();
@@ -412,8 +409,8 @@ function CreateElement(tag, properties, ...children) {
  * @returns An element constructor function that takes props.
  */
 function CreateComponent(properties) {
-    let component = wrapComponent(properties);
-    let wrapper = function (props) {
+    const component = wrapComponent(properties);
+    const wrapper = function (props) {
         return createComponentInstance(component, props);
     };
     Object.assign(wrapper, component);
@@ -462,7 +459,7 @@ function Store(defaultState) {
             });
         },
         subscribe(handler) {
-            let handlerId = getUniqueId();
+            const handlerId = getUniqueId();
             this.handlers[handlerId] = handler;
             return handlerId;
         },
