@@ -1,40 +1,45 @@
-import { CurlUITag, ElementProps, ChildComponent, RenderElement, CurlUIElement, ComponentProps, Component, CurlUIStore, StoreState, NativeElement, InstanceReference } from "./types";
-type Props = {
-    [key: string]: any;
-};
+import type { ChildComponent, Component, ComponentDefinition, ComponentInstance, CurlUIStore, CurlUITag, ElementProps, InstanceReferenceHandle, RenderElement, StoreState } from "./types";
+export * from "./types";
+/** Tag used by <Fragment>. Rendered with `display: contents`. */
+export declare const FRAGMENT_TAG = "curl-fragment";
 /**
- * Creates a CurlUIRenderElement, a wrapper oven an element
- * CurlUI can render on the DOM.
- * @param tag The element tag
- * @param properties Attributes to assign to the element
- * @param children The elements child elements.
- * @returns A CurlUIRenderElement.
+ * Applies all pending component updates now. Runs automatically in a microtask;
+ * call it manually when you need the DOM to be current synchronously.
  */
-export declare function CreateElement(tag: CurlUITag, properties: ElementProps<NativeElement>, ...children: Array<ChildComponent | Array<ChildComponent>>): CurlUIElement;
+export declare function FlushUpdates(): void;
 /**
- * Generates a function for custom element creation.
- * From a wrapped custom component properties.
- * @param properties The custom component's properties.
- * @returns An element constructor function that takes props.
+ * Creates a render element (a wrapper around a DOM node CurlUI can mount).
+ * Props are not mutated. `children` may come from the rest arguments, from
+ * `props.children`, or both.
  */
-export declare function CreateComponent<T extends Props>(properties: ComponentProps): Component<T>;
+export declare function CreateElement<K extends CurlUITag>(tag: K, properties?: ElementProps<K> | null, ...children: ChildComponent[]): RenderElement;
 /**
- * Constructor function for an instanceReference handle that can be
- * used to externally refer to a component instance
- * @returns
+ * Groups children without adding a meaningful wrapper. Because every render
+ * element maps to exactly one DOM node, this renders a `<curl-fragment>` with
+ * `display: contents`.
  */
-export declare function InstanceReference(): InstanceReference;
+export declare function Fragment(props?: {
+    children?: ChildComponent;
+}): RenderElement;
 /**
- * Actually renders a renderable CurlUI element to the DOM element specified
- * @param element
- * @param htmlElement
+ * Defines a component. Pass the props type (and optionally state type) explicitly:
+ *   CreateComponent<{ name: string }, { count: number }>({ ... })
+ * Custom methods on the definition are available on `this`.
  */
-export declare function Render(element: RenderElement, htmlElement: HTMLElement): void;
+export declare function CreateComponent<P extends object = {}, S extends object = {}, M extends object = {
+    [member: string]: any;
+}>(definition: ComponentDefinition<P, S> & M & ThisType<ComponentInstance<P, S, M>>): Component<P>;
 /**
- * Constructor for a CurlUIStore,a watchable properties object,
- * listeners can be bound to it for each time the state of the store chages.
- * @param state The initial state of the store.
- * @returns The store object.
+ * Creates a handle that receives the DOM element (native tags) or the
+ * component instance (components) once rendered, and is cleared on unmount.
  */
-export declare function Store(defaultState: StoreState): CurlUIStore;
-export {};
+export declare function InstanceReference<T = any>(): InstanceReferenceHandle<T>;
+/** Unmounts whatever `Render` previously put in `container`. */
+export declare function Unmount(container: HTMLElement): void;
+/** Mounts `element` into `container`, unmounting any previous tree first. */
+export declare function Render(element: RenderElement, container: HTMLElement): void;
+/**
+ * Creates a store. Components should use `this.bindStore(store)` so the
+ * subscription is released on unmount (call it from `mounted`).
+ */
+export declare function Store<S extends object = StoreState>(defaultState: S): CurlUIStore<S>;

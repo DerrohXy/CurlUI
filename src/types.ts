@@ -1,3 +1,20 @@
+/* -------------------------------------------------------------------------- */
+/*  Tags                                                                      */
+/* -------------------------------------------------------------------------- */
+
+export type Primitive = string | number | boolean | null | undefined;
+
+/** Every tag known to lib.dom. No `| string`, so typos like <dvi> are errors. */
+export type HtmlTag = keyof HTMLElementTagNameMap;
+export type SvgTag = keyof SVGElementTagNameMap;
+export type CurlUITag = HtmlTag | SvgTag;
+
+export type NativeElement = HTMLElement | SVGElement;
+
+/* -------------------------------------------------------------------------- */
+/*  Lifecycle                                                                 */
+/* -------------------------------------------------------------------------- */
+
 export type ElementHookProps = {
     mounting?: () => any;
     mounted?: () => any;
@@ -5,762 +22,329 @@ export type ElementHookProps = {
     unmounted?: () => any;
 };
 
-export type CurlUIElement = ElementHookProps & {
-    isElement: boolean;
-    elementId: string;
-    element: NativeElement;
-    parent?: CurlUIElement | HTMLElement | null;
-    children?: Array<CurlUIElement>;
-    setParent: (parent: CurlUIElement | HTMLElement | null) => void;
-    __mounted__: boolean;
-    _mounting_: () => void;
-    _mounted_: () => void;
-    _unmounting_: () => void;
-    _unmounted_: () => void;
-};
-
-export type ElementProps<T extends NativeElement> = ElementAttributeProps &
-    ElementEventListenerProps & {
-        className?: string;
-        style?: CSSProps;
-        instanceReference?: InstanceReference;
-        children?: Array<ChildComponent> | ChildComponent;
-        //
-        [key: string]: any;
-    };
-
-export type ElementState = {
-    [key: string]: any;
-};
-
 export type ComponentHookProps = ElementHookProps & {
     updating?: () => any;
     updated?: () => any;
 };
 
-export type ComponentProps = ComponentHookProps & {
-    getInitialState?: () => ElementState;
-    getDefaultProps?: () => ElementProps<NativeElement>;
-    update?: (currentState: ElementState, newState: ElementState) => boolean;
-    render: () => RenderElement;
-    //
-    [key: string]: any;
+/* -------------------------------------------------------------------------- */
+/*  References                                                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Handle filled in by the runtime. For native elements `instance` is the DOM
+ * element, for components it is the component instance. Cleared on unmount.
+ */
+export type InstanceReferenceHandle<T = any> = {
+    isInstanceReference: true;
+    instance: T | null;
 };
 
-export type WrappedComponent = ComponentProps & {
-    isComponent: boolean;
-    componentId: string;
+/* -------------------------------------------------------------------------- */
+/*  Render tree                                                               */
+/* -------------------------------------------------------------------------- */
+
+export type CurlUIElement = ElementHookProps & {
+    isElement: true;
+    /** True for text and placeholder (comment) nodes. */
+    isText?: boolean;
+    isComponent?: boolean;
+    elementId: string;
+    /** Tag name, "#text" or "#comment". Undefined for components. */
+    tag?: string;
+    key?: string;
+    text?: string;
+    /** Any DOM node: element, text or comment. */
+    element: Node;
+    parent: CurlUIElement | HTMLElement | null;
+    children: Array<CurlUIElement>;
+    /** Props last applied to the element (used for diffing). */
+    props?: Record<string, any>;
+    ref?: InstanceReferenceHandle | null;
+    __mounted__: boolean;
+    __destroyed__?: boolean;
+    __ambiguous__?: boolean;
+    setParent(parent: CurlUIElement | HTMLElement | null): void;
+    _mounting_(): void;
+    _mounted_(): void;
+    _unmounting_(): void;
+    _unmounted_(): void;
 };
 
-export type Component<T extends {}> = {
-    (props: T): RenderElement;
-    //
-};
+export type RenderElement = CurlUIElement;
 
-export type ComponentInstance = CurlUIElement &
-    WrappedComponent & {
-        state: ElementState;
-        props: ElementProps<NativeElement>;
-        setState(state: ElementState): void;
-        getState(): ElementState;
-        getProps(): ElementProps<NativeElement>;
-        initialize(): void;
-        //
-        [key: string]: any;
-    };
-
-export type InstanceReference = {
-    isInstanceReference: boolean;
-    instance: HTMLElement | SVGElement | ComponentInstance | null;
-};
-
-export type RenderElement = CurlUIElement | ComponentInstance;
-
-export type NativeElement = HTMLElement | SVGElement;
-
-export type StoreState = {
-    [key: string]: any;
-};
-
-export type StoreHandlers = {
-    [key: string]: Function;
-};
-
-export type CurlUIStore = {
-    state: StoreState;
-    handlers: StoreHandlers;
-    getState(): StoreState;
-    setState(state: StoreState): void;
-    subscribe(handler: Function): string;
-    unsubscribe(handlerId: string): void;
-};
-
-export type ChildComponent = string | number | boolean | CurlUIElement | null;
-
-export type SvgTag =
+/** Anything that can appear as a child. Arrays may nest. */
+export type ChildComponent =
     | string
-    | "svg"
-    | "path"
-    | "circle"
-    | "ellipse"
-    | "line"
-    | "polygon"
-    | "polyline"
-    | "rect"
-    | "g"
-    | "title"
-    | "defs"
-    | "clipPath"
-    | "stop"
-    | "linearGradient"
-    | "radialGradient";
+    | number
+    | boolean
+    | null
+    | undefined
+    | CurlUIElement
+    | ChildComponent[];
 
-export type HtmlTag =
-    | SvgTag
-    | "a"
-    | "abbr"
-    | "address"
-    | "area"
-    | "article"
-    | "aside"
-    | "audio"
-    | "b"
-    | "base"
-    | "bdi"
-    | "bdo"
-    | "blockquote"
-    | "body"
-    | "br"
-    | "button"
-    | "canvas"
-    | "caption"
-    | "cite"
-    | "code"
-    | "col"
-    | "colgroup"
-    | "data"
-    | "datalist"
-    | "dd"
-    | "del"
-    | "details"
-    | "dfn"
-    | "dialog"
-    | "div"
-    | "dl"
-    | "dt"
-    | "em"
-    | "embed"
-    | "fieldset"
-    | "figcaption"
-    | "figure"
-    | "footer"
-    | "form"
-    | "h1"
-    | "h2"
-    | "h3"
-    | "h4"
-    | "h5"
-    | "h6"
-    | "head"
-    | "header"
-    | "hgroup"
-    | "hr"
-    | "html"
-    | "i"
-    | "iframe"
-    | "img"
-    | "input"
-    | "ins"
-    | "kbd"
-    | "label"
-    | "legend"
-    | "li"
-    | "link"
-    | "main"
-    | "map"
-    | "mark"
-    | "menu"
-    | "meta"
-    | "meter"
-    | "nav"
-    | "noscript"
-    | "object"
-    | "ol"
-    | "optgroup"
-    | "option"
-    | "output"
-    | "p"
-    | "picture"
-    | "pre"
-    | "progress"
-    | "q"
-    | "rp"
-    | "rt"
-    | "ruby"
-    | "s"
-    | "samp"
-    | "script"
-    | "section"
-    | "select"
-    | "slot"
-    | "small"
-    | "source"
-    | "span"
-    | "strong"
-    | "style"
-    | "sub"
-    | "summary"
-    | "sup"
-    | "table"
-    | "tbody"
-    | "td"
-    | "template"
-    | "textarea"
-    | "tfoot"
-    | "th"
-    | "thead"
-    | "time"
-    | "title"
-    | "tr"
-    | "track"
-    | "u"
-    | "ul"
-    | "var"
-    | "video"
-    | "wbr";
+/* -------------------------------------------------------------------------- */
+/*  Props                                                                     */
+/* -------------------------------------------------------------------------- */
 
-export type CurlUITag = HtmlTag;
+type StringKeys<T> = {
+    [K in keyof T]-?: K extends string
+        ? T[K] extends string
+            ? K
+            : never
+        : never;
+}[keyof T];
 
+type CSSValue = string | number | null | undefined;
+
+/** Style object. Numbers get "px" unless the property is unitless. */
 export type CSSProps = {
-    // Background
-    background?: string;
-    backgroundAttachment?: "scroll" | "fixed" | "local" | string;
-    backgroundColor?: string;
-    backgroundImage?: string;
-    backgroundPosition?: string;
-    backgroundRepeat?:
-        | "repeat"
-        | "repeat-x"
-        | "repeat-y"
-        | "no-repeat"
-        | string;
-
-    // Border
-    border?: string;
-    borderBottom?: string;
-    borderBottomColor?: string;
-    borderBottomStyle?:
-        | "none"
-        | "hidden"
-        | "dotted"
-        | "dashed"
-        | "solid"
-        | "double"
-        | "groove"
-        | "ridge"
-        | "inset"
-        | "outset"
-        | string;
-    borderBottomWidth?: string;
-    borderColor?: string;
-    borderLeft?: string;
-    borderLeftColor?: string;
-    borderLeftStyle?:
-        | "none"
-        | "hidden"
-        | "dotted"
-        | "dashed"
-        | "solid"
-        | "double"
-        | "groove"
-        | "ridge"
-        | "inset"
-        | "outset"
-        | string;
-    borderLeftWidth?: string;
-    borderRadius?: string;
-    borderRight?: string;
-    borderRightColor?: string;
-    borderRightStyle?:
-        | "none"
-        | "hidden"
-        | "dotted"
-        | "dashed"
-        | "solid"
-        | "double"
-        | "groove"
-        | "ridge"
-        | "inset"
-        | "outset"
-        | string;
-    borderRightWidth?: string;
-    borderStyle?:
-        | "none"
-        | "hidden"
-        | "dotted"
-        | "dashed"
-        | "solid"
-        | "double"
-        | "groove"
-        | "ridge"
-        | "inset"
-        | "outset"
-        | string;
-    borderTop?: string;
-    borderTopColor?: string;
-    borderTopStyle?:
-        | "none"
-        | "hidden"
-        | "dotted"
-        | "dashed"
-        | "solid"
-        | "double"
-        | "groove"
-        | "ridge"
-        | "inset"
-        | "outset"
-        | string;
-    borderTopWidth?: string;
-    borderWidth?: string;
-
-    // Box & Display
-    boxShadow?: string;
-    boxSizing?: "border-box" | "content-box" | string;
-    clear?: "none" | "left" | "right" | "both" | string;
-    display?:
-        | "none"
-        | "block"
-        | "inline"
-        | "inline-block"
-        | "flex"
-        | "grid"
-        | "inline-flex"
-        | "inline-grid"
-        | "contents"
-        | "list-item"
-        | "table"
-        | "table-row"
-        | "table-cell"
-        | string;
-    float?: "none" | "left" | "right" | "inline-start" | "inline-end" | string;
-    width?: string;
-    height?: string;
-    minWidth?: string;
-    minHeight?: string;
-    maxWidth?: string;
-    maxHeight?: string;
-    padding?: string;
-    paddingTop?: string;
-    paddingLeft?: string;
-    paddingBottom?: string;
-    paddingRight?: string;
-    margin?: string;
-    marginTop?: string;
-    marginLeft?: string;
-    marginRight?: string;
-    marginBottom?: string;
-
-    // Position
-    position?: "static" | "relative" | "absolute" | "fixed" | "sticky" | string;
-    top?: string;
-    right?: string;
-    bottom?: string;
-    left?: string;
-    zIndex?: number | string;
-
-    // Overflow
-    overflow?: "visible" | "hidden" | "scroll" | "auto" | string;
-    overflowX?: "visible" | "hidden" | "scroll" | "auto" | string;
-    overflowY?: "visible" | "hidden" | "scroll" | "auto" | string;
-
-    // Visibility
-    visibility?: "visible" | "hidden" | "collapse" | string;
-
-    // Typography
-    color?: string;
-    fontFamily?: string;
-    fontSize?: string;
-    fontStyle?: "normal" | "italic" | "oblique" | string;
-    fontVariant?: string;
-    fontWeight?:
-        | "normal"
-        | "bold"
-        | "bolder"
-        | "lighter"
-        | "100"
-        | "200"
-        | "300"
-        | "400"
-        | "500"
-        | "600"
-        | "700"
-        | "800"
-        | "900"
-        | string;
-    letterSpacing?: string;
-    lineHeight?: string;
-    textAlign?:
-        | "left"
-        | "right"
-        | "center"
-        | "justify"
-        | "start"
-        | "end"
-        | string;
-    textDecoration?:
-        | "none"
-        | "underline"
-        | "overline"
-        | "line-through"
-        | string;
-    textOverflow?: "clip" | "ellipsis" | string;
-    textTransform?: "none" | "capitalize" | "uppercase" | "lowercase" | string;
-    whiteSpace?: "normal" | "nowrap" | "pre" | "pre-line" | "pre-wrap" | string;
-
-    // Flex
-    alignItems?:
-        | "stretch"
-        | "center"
-        | "flex-start"
-        | "flex-end"
-        | "baseline"
-        | string;
-    alignContent?:
-        | "stretch"
-        | "center"
-        | "flex-start"
-        | "flex-end"
-        | "space-between"
-        | "space-around"
-        | string;
-    alignSelf?:
-        | "auto"
-        | "stretch"
-        | "center"
-        | "flex-start"
-        | "flex-end"
-        | "baseline"
-        | string;
-    justifyContent?:
-        | "flex-start"
-        | "flex-end"
-        | "center"
-        | "space-between"
-        | "space-around"
-        | "space-evenly"
-        | string;
-    flexDirection?:
-        | "row"
-        | "row-reverse"
-        | "column"
-        | "column-reverse"
-        | string;
-    flexWrap?: "nowrap" | "wrap" | "wrap-reverse" | string;
-    flexGrow?: string;
-
-    // Cursor
-    cursor?:
-        | "auto"
-        | "default"
-        | "pointer"
-        | "wait"
-        | "text"
-        | "move"
-        | "not-allowed"
-        | "crosshair"
-        | "zoom-in"
-        | "zoom-out"
-        | string;
-
-    // Animation
-    animationDirection?:
-        | "normal"
-        | "reverse"
-        | "alternate"
-        | "alternate-reverse"
-        | string;
-    animationFillMode?: "none" | "forwards" | "backwards" | "both" | string;
-    animationPlayState?: "running" | "paused" | string;
-    animationTimingFunction?:
-        | "ease"
-        | "linear"
-        | "ease-in"
-        | "ease-out"
-        | "ease-in-out"
-        | string;
-
-    // Misc
-    opacity?: string | number;
-    pointerEvents?:
-        | "auto"
-        | "none"
-        | "visiblePainted"
-        | "visibleFill"
-        | "visibleStroke"
-        | "visible"
-        | "painted"
-        | "fill"
-        | "stroke"
-        | "all"
-        | string;
-    resize?: "none" | "both" | "horizontal" | "vertical" | string;
-    userSelect?: "auto" | "text" | "none" | "contain" | "all" | string;
-
-    // Any unknown props
-    [key: string]: any;
+    [K in Exclude<StringKeys<CSSStyleDeclaration>, "cssText">]?: CSSValue;
+} & {
+    float?: CSSValue;
+    [custom: `--${string}`]: CSSValue;
 };
 
-export type ElementAttributeProps = {
-    // Global attributes
+type IfEquals<X, Y, A, B> =
+    (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? A : B;
+
+type OmittedDomKeys =
+    | "innerHTML"
+    | "outerHTML"
+    | "innerText"
+    | "outerText"
+    | "textContent"
+    | "nodeValue"
+    | "className"
+    | "value"
+    | "style";
+
+/**
+ * Writable, primitive-valued properties of a DOM interface.
+ * Excludes readonly members, functions, event handlers and HTML-injecting sinks.
+ */
+export type DomProps<E> = {
+    [P in keyof E as P extends string
+        ? P extends OmittedDomKeys | `on${string}`
+            ? never
+            : E[P] extends Primitive
+              ? IfEquals<
+                    { [Q in P]: E[P] },
+                    { -readonly [Q in P]: E[P] },
+                    P,
+                    never
+                >
+              : never
+        : never]?: E[P];
+};
+
+/** Lowercase attribute spellings the runtime also accepts. */
+export type LegacyAttributes = {
     accesskey?: string;
-    autocapitalize?:
-        | "off"
-        | "none"
-        | "on"
-        | "sentences"
-        | "words"
-        | "characters"
-        | string;
-    class?: string;
-    contenteditable?: boolean | "true" | "false";
-    contextmenu?: string;
-    dir?: "ltr" | "rtl" | "auto";
-    draggable?: boolean | "true" | "false";
-    enterkeyhint?:
-        | "enter"
-        | "done"
-        | "go"
-        | "next"
-        | "previous"
-        | "search"
-        | "send"
-        | string;
-    hidden?: boolean | "true" | "false";
-    id?: string;
-    inputmode?:
-        | "none"
-        | "text"
-        | "decimal"
-        | "numeric"
-        | "tel"
-        | "search"
-        | "email"
-        | "url"
-        | string;
-    is?: string;
-    lang?: string;
-    nonce?: string;
-    part?: string;
-    slot?: string;
-    spellcheck?: boolean | "true" | "false";
     tabindex?: number | string;
-    title?: string;
-    translate?: "yes" | "no";
-
-    // Form-related attributes
-    accept?: string;
-    action?: string;
-    autofocus?: boolean | "true" | "false";
-    autocomplete?: "on" | "off" | string;
-    checked?: boolean | "true" | "false";
-    cols?: number | string;
-    dirname?: string;
-    disabled?: boolean | "true" | "false";
-    form?: string;
-    formaction?: string;
-    formenctype?:
-        | "application/x-www-form-urlencoded"
-        | "multipart/form-data"
-        | "text/plain"
-        | string;
-    formmethod?: "get" | "post" | "dialog" | string;
-    formnovalidate?: boolean | "true" | "false";
-    formtarget?: "_self" | "_blank" | "_parent" | "_top" | string;
-    list?: string;
-    max?: string | number;
-    maxlength?: number | string;
-    min?: string | number;
-    minlength?: number | string;
-    method?: "get" | "post" | "dialog" | string;
-    multiple?: boolean | "true" | "false";
-    name?: string;
-    novalidate?: boolean | "true" | "false";
-    pattern?: string;
-    placeholder?: string;
+    contenteditable?: boolean | "true" | "false" | "plaintext-only" | "inherit";
+    enterkeyhint?: string;
+    inputmode?: string;
+    spellcheck?: boolean | "true" | "false";
     readonly?: boolean | "true" | "false";
-    required?: boolean | "true" | "false";
-    rows?: number | string;
-    selected?: boolean | "true" | "false";
-    size?: number | string;
-    step?: number | string;
-    value?: string | number;
-    wrap?: "hard" | "soft" | "off" | string;
-
-    // Media-related attributes
-    alt?: string;
-    autoplay?: boolean | "true" | "false";
-    controls?: boolean | "true" | "false";
-    height?: string | number;
-    loop?: boolean | "true" | "false";
-    muted?: boolean | "true" | "false";
-    poster?: string;
-    preload?: "none" | "metadata" | "auto" | string;
-    width?: string | number;
-
-    // Anchor & link-related
-    download?: boolean | string;
-    href?: string;
-    hreflang?: string;
-    media?: string;
-    ping?: string;
-    rel?:
-        | "alternate"
-        | "author"
-        | "bookmark"
-        | "external"
-        | "help"
-        | "license"
-        | "next"
-        | "nofollow"
-        | "noopener"
-        | "noreferrer"
-        | "prev"
-        | "search"
-        | "tag"
-        | string;
-    target?: "_self" | "_blank" | "_parent" | "_top" | string;
-
-    // Script attributes
-    async?: boolean | "true" | "false";
-    defer?: boolean | "true" | "false";
-    src?: string;
-    type?: string;
+    maxlength?: number | string;
+    minlength?: number | string;
+    novalidate?: boolean | "true" | "false";
+    formnovalidate?: boolean | "true" | "false";
     crossorigin?: "anonymous" | "use-credentials" | string;
-    integrity?: string;
+    referrerpolicy?: string;
+    hreflang?: string;
     nomodule?: boolean | "true" | "false";
-    referrerpolicy?:
-        | "no-referrer"
-        | "no-referrer-when-downgrade"
-        | "origin"
-        | "origin-when-cross-origin"
-        | "same-origin"
-        | "strict-origin"
-        | "strict-origin-when-cross-origin"
-        | "unsafe-url"
-        | string;
-
-    // Allow any other attribute or custom prop
-    [key: string]: any;
+    formaction?: string;
+    formmethod?: string;
+    formtarget?: string;
+    formenctype?: string;
 };
 
-export type ElementEventListenerProps = {
-    onafterprint?: Function;
-    onanimationcancel?: Function;
-    onanimationend?: Function;
-    onanimationiteration?: Function;
-    onanimationstart?: Function;
-    onauxclick?: Function;
-    onbeforeinput?: Function;
-    onbeforeprint?: Function;
-    onbeforeunload?: Function;
-    onblur?: Function;
-    oncanplay?: Function;
-    oncanplaythrough?: Function;
-    onchange?: Function;
-    onclick?: Function;
-    onclose?: Function;
-    oncontextmenu?: Function;
-    oncopy?: Function;
-    oncuechange?: Function;
-    oncut?: Function;
-    ondblclick?: Function;
-    ondrag?: Function;
-    ondragend?: Function;
-    ondragenter?: Function;
-    ondragexit?: Function;
-    ondragleave?: Function;
-    ondragover?: Function;
-    ondragstart?: Function;
-    ondrop?: Function;
-    ondurationchange?: Function;
-    onemptied?: Function;
-    onended?: Function;
-    onerror?: Function;
-    onfocus?: Function;
-    onformdata?: Function;
-    onfullscreenchange?: Function;
-    onfullscreenerror?: Function;
-    ongamepadconnected?: Function;
-    ongamepaddisconnected?: Function;
-    ongotpointercapture?: Function;
-    onhashchange?: Function;
-    oninput?: Function;
-    oninvalid?: Function;
-    onkeydown?: Function;
-    onkeypress?: Function;
-    onkeyup?: Function;
-    onlanguagechange?: Function;
-    onload?: Function;
-    onloadeddata?: Function;
-    ononloadedmetadata?: Function;
-    onloadstart?: Function;
-    onlostpointercapture?: Function;
-    onmessage?: Function;
-    onmessageerror?: Function;
-    onmousedown?: Function;
-    onmousemove?: Function;
-    onmouseout?: Function;
-    onmouseover?: Function;
-    onmouseup?: Function;
-    onoffline?: Function;
-    ononline?: Function;
-    onpagehide?: Function;
-    onpageshow?: Function;
-    onpaste?: Function;
-    onpause?: Function;
-    onplay?: Function;
-    onplaying?: Function;
-    onpointercancel?: Function;
-    onpointerdown?: Function;
-    onpointerenter?: Function;
-    onpointerleave?: Function;
-    onpointermove?: Function;
-    onpointerout?: Function;
-    onpointerover?: Function;
-    onpointerup?: Function;
-    onpopstate?: Function;
-    onprogress?: Function;
-    onratechange?: Function;
-    onrejectionhandled?: Function;
-    onreset?: Function;
-    onresize?: Function;
-    onscroll?: Function;
-    onscrollend?: Function;
-    onsecuritypolicyviolation?: Function;
-    onseeked?: Function;
-    onseeking?: Function;
-    onselect?: Function;
-    onselectionchange?: Function;
-    onselectstart?: Function;
-    onslotchange?: Function;
-    onstalled?: Function;
-    onstorage?: Function;
-    onsubmit?: Function;
-    onsuspend?: Function;
-    ontimeupdate?: Function;
-    ontoggle?: Function;
-    ontransitioncancel?: Function;
-    ontransitionend?: Function;
-    ontransitionrun?: Function;
-    ontransitionstart?: Function;
-    onunhandledrejection?: Function;
-    onunload?: Function;
-    onvolumechange?: Function;
-    onwaiting?: Function;
-    onwebkitanimationend?: Function;
-    onwebkitanimationiteration?: Function;
-    onwebkitanimationstart?: Function;
-    onwebkittransitionend?: Function;
-    //
-    [key: string]: any;
+export type SvgAttributes = {
+    id?: string;
+    role?: string;
+    tabIndex?: number;
+    focusable?: boolean | "true" | "false" | "auto";
+    xmlns?: string;
+    viewBox?: string;
+    preserveAspectRatio?: string;
+    width?: string | number;
+    height?: string | number;
+    x?: string | number;
+    y?: string | number;
+    x1?: string | number;
+    y1?: string | number;
+    x2?: string | number;
+    y2?: string | number;
+    cx?: string | number;
+    cy?: string | number;
+    r?: string | number;
+    rx?: string | number;
+    ry?: string | number;
+    d?: string;
+    points?: string;
+    transform?: string;
+    href?: string;
+    offset?: string | number;
+    opacity?: string | number;
+    fill?: string;
+    fillOpacity?: string | number;
+    fillRule?: "nonzero" | "evenodd";
+    clipRule?: "nonzero" | "evenodd";
+    clipPath?: string;
+    mask?: string;
+    filter?: string;
+    stroke?: string;
+    strokeWidth?: string | number;
+    strokeOpacity?: string | number;
+    strokeLinecap?: "butt" | "round" | "square";
+    strokeLinejoin?: "miter" | "round" | "bevel" | "arcs" | "miter-clip";
+    strokeDasharray?: string | number;
+    strokeDashoffset?: string | number;
+    strokeMiterlimit?: string | number;
+    stopColor?: string;
+    stopOpacity?: string | number;
+    gradientUnits?: "userSpaceOnUse" | "objectBoundingBox";
+    gradientTransform?: string;
+    textAnchor?: "start" | "middle" | "end";
+    dominantBaseline?: string;
+    fontSize?: string | number;
+    fontFamily?: string;
+    fontWeight?: string | number;
+    markerStart?: string;
+    markerMid?: string;
+    markerEnd?: string;
+};
+
+type EventMap = GlobalEventHandlersEventMap;
+
+/** `onclick` and `onClick` are both accepted; the event name is lowercased. */
+export type EventProps = {
+    [K in keyof EventMap as `on${K & string}`]?: (ev: EventMap[K]) => any;
+} & {
+    [K in keyof EventMap as `on${Capitalize<K & string>}`]?: (
+        ev: EventMap[K],
+    ) => any;
+};
+
+/** `data-*`, `aria-*` and kebab-case SVG attributes. */
+export type HyphenatedAttributes = {
+    [attr: `${string}-${string}`]: Primitive;
+};
+
+export interface BaseProps {
+    key?: string | number;
+    class?: string;
+    className?: string;
+    style?: CSSProps | string;
+    instanceReference?: InstanceReferenceHandle;
+    ref?: InstanceReferenceHandle;
+    children?: ChildComponent;
+}
+
+export type ElementProps<K extends CurlUITag = CurlUITag> = BaseProps &
+    ElementHookProps &
+    EventProps &
+    HyphenatedAttributes &
+    (K extends HtmlTag
+        ? DomProps<HTMLElementTagNameMap[K]> & {
+              value?: string | number;
+          } & LegacyAttributes
+        : SvgAttributes);
+
+/* -------------------------------------------------------------------------- */
+/*  Components                                                                */
+/* -------------------------------------------------------------------------- */
+
+/** Props every component receives in addition to its own. */
+export type ComponentOwnProps = {
+    children?: ChildComponent;
+    key?: string | number;
+    instanceReference?: InstanceReferenceHandle;
+    ref?: InstanceReferenceHandle;
+};
+
+export type ComponentDefinition<
+    P extends object = {},
+    S extends object = {},
+> = ComponentHookProps & {
+    getInitialState?(): S;
+    getDefaultProps?(): Partial<P>;
+    /** Return true to re-render, anything else to skip. */
+    update?(current: S, next: S): boolean;
+    /** May return null / false / an array; it is normalised to one node. */
+    render(): ChildComponent;
+};
+
+export type ComponentInstance<
+    P extends object = any,
+    S extends object = any,
+    M extends object = {},
+> = CurlUIElement &
+    ComponentHookProps & {
+        isComponent: true;
+        componentId: string;
+        instanceId: string;
+        props: P & ComponentOwnProps;
+        state: S;
+        /** The node this component rendered. `children` is `[root]`. */
+        root: CurlUIElement;
+        __dirty__?: boolean;
+        __cleanups__?: Array<() => void>;
+        render(): ChildComponent;
+        getInitialState?(): S;
+        getDefaultProps?(): Partial<P>;
+        update?(current: S, next: S): boolean;
+        getState(): S;
+        getProps(): P & ComponentOwnProps;
+        /** State updates immediately; the DOM update is batched into a microtask. */
+        setState(
+            patch: Partial<S> | ((state: S) => Partial<S>),
+            skipUpdate?: boolean,
+        ): void;
+        forceUpdate(): void;
+        rerender(): void;
+        /** Re-render when the store (or the selected slice) changes. Auto-unsubscribes on unmount. */
+        bindStore<T extends object>(
+            store: CurlUIStore<T>,
+            selector?: (state: T) => unknown,
+        ): () => void;
+        /** Run `fn` when the component unmounts. */
+        onCleanup(fn: () => void): void;
+    } & M;
+
+export type WrappedComponent = ComponentDefinition<any, any> & {
+    isComponent: true;
+    componentId: string;
+    [member: string]: any;
+};
+
+export type Component<P extends object = {}> = {
+    (props: P & ComponentOwnProps): ComponentInstance<P, any>;
+    componentId: string;
+    definition: ComponentDefinition<P, any>;
+};
+
+/* -------------------------------------------------------------------------- */
+/*  Store                                                                     */
+/* -------------------------------------------------------------------------- */
+
+export type StoreState = { [key: string]: any };
+
+export type StoreHandler<S> = (state: S, previous: S) => void;
+
+export type CurlUIStore<S extends object = StoreState> = {
+    getState(): S;
+    /** Shallow-merges. Subscribers are skipped if nothing actually changed. */
+    setState(patch: Partial<S> | ((state: S) => Partial<S>)): void;
+    /** Returns an unsubscribe function. */
+    subscribe(handler: StoreHandler<S>): () => void;
+    unsubscribe(handler: StoreHandler<S>): void;
+    /** Subscribe to a derived value; the handler only fires when it changes. */
+    select<T>(
+        selector: (state: S) => T,
+        handler: (value: T, previous: T) => void,
+        equals?: (a: T, b: T) => boolean,
+    ): () => void;
 };

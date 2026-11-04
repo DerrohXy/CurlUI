@@ -1,33 +1,25 @@
-import { HtmlTag, CurlUITag, RenderElement, ElementProps, Component, NativeElement } from "./types";
-type Props = {
-    [key: string]: any;
-};
-type CurlUIJSXTag = CurlUITag | Component<Props>;
-type CurlUIJSXChild = CurlUIJSXParameters | RenderElement;
-type CurlUIJSXChildren = CurlUIJSXChild | Array<CurlUIJSXChild>;
-type CurlUIJSXProps = ElementProps<NativeElement> & {
-    children?: CurlUIJSXChildren;
-};
-type CurlUIJSXParameters = {
-    type: CurlUITag;
-    props: CurlUIJSXProps;
-    key: any;
-};
+import { Fragment } from "./index";
+import type { CurlUITag, ElementProps, RenderElement } from "./types";
+export { Fragment };
+type FunctionComponent = (props: any) => RenderElement;
+export type CurlUIJSXTag = CurlUITag | FunctionComponent;
 /**
- * Generates a CurlUI render element from a JSX tag
- * @param type Tag to parse
- * @param props Props to parse to the component function
- * @param key #Ignored
- * @returns
+ * Automatic-runtime entry point. Children arrive in `props.children`
+ * (already-built render elements, possibly nested arrays) and are handled
+ * by CreateElement, so nothing is re-parsed here.
  */
-export declare function jsx(type: CurlUIJSXTag, props?: CurlUIJSXProps, key?: any): RenderElement;
+export declare function jsx(type: CurlUIJSXTag, props?: Record<string, any> | null, key?: string | number | null): RenderElement;
 export declare const jsxs: typeof jsx;
-declare global {
-    namespace JSX {
-        type IntrinsicElements = {
-            [tag in HtmlTag]: ElementProps<NativeElement>;
-        };
-        type ElementClass = Component<Props>;
+export declare namespace JSX {
+    type Element = RenderElement;
+    type ElementType = CurlUITag | FunctionComponent;
+    interface ElementChildrenAttribute {
+        children: {};
     }
+    interface IntrinsicAttributes {
+        key?: string | number;
+    }
+    type IntrinsicElements = {
+        [K in CurlUITag]: ElementProps<K>;
+    };
 }
-export {};

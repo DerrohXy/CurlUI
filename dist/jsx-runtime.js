@@ -1,82 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jsxs = void 0;
+exports.jsxs = exports.Fragment = void 0;
 exports.jsx = jsx;
 const index_1 = require("./index");
-/***
- * Recursively parses a child entry
- */
-function _parseChild(child) {
-    if (!child) {
-        return null;
-    }
-    if (child.type) {
-        return jsx(child.type, child.props, child.key);
-    }
-    else {
-        return child;
-    }
-}
+Object.defineProperty(exports, "Fragment", { enumerable: true, get: function () { return index_1.Fragment; } });
 /**
- * Incase the children parameter is not empty
- * @param type
- * @param props
- * @param key
- * @returns
- */
-function _withChildren(type, props, key) {
-    if (Array.isArray(props.children)) {
-        const parsedChildren_ = props.children.map((child) => {
-            return _parseChild(child);
-        });
-        delete props.children;
-        return (0, index_1.CreateElement)(type, props, ...parsedChildren_);
-    }
-    else {
-        const parsedChild_ = _parseChild(props.children);
-        delete props.children;
-        return (0, index_1.CreateElement)(type, props, parsedChild_);
-    }
-}
-/**
- * In case of non empty props
- * @param type
- * @param props
- * @param key
- * @returns
- */
-function _withProps(type, props, key) {
-    if (typeof type === "function") {
-        return type(props);
-    }
-    else {
-        return props.children
-            ? _withChildren(type, props, key)
-            : (0, index_1.CreateElement)(type, props);
-    }
-}
-/**
- * In case of empty props
- * @param type
- * @param key
- * @returns
- */
-function _withoutProps(type, key) {
-    return typeof type === "string" ? (0, index_1.CreateElement)(type, {}) : type({});
-}
-/**
- * Generates a CurlUI render element from a JSX tag
- * @param type Tag to parse
- * @param props Props to parse to the component function
- * @param key #Ignored
- * @returns
+ * Automatic-runtime entry point. Children arrive in `props.children`
+ * (already-built render elements, possibly nested arrays) and are handled
+ * by CreateElement, so nothing is re-parsed here.
  */
 function jsx(type, props, key) {
-    if (props) {
-        return _withProps(type, props, key);
+    const p = props !== null && props !== void 0 ? props : {};
+    const element = typeof type === "function"
+        ? type(p)
+        : (0, index_1.CreateElement)(type, p);
+    if (key !== undefined && key !== null) {
+        element.key = String(key);
     }
-    else {
-        return _withoutProps(type, key);
-    }
+    return element;
 }
 exports.jsxs = jsx;
