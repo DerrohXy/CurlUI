@@ -43,29 +43,11 @@ CurlUI is source-only: copy the folder into your project (for example `src/curlu
         "jsx": "react-jsx",
         "jsxImportSource": "curlui",
         "moduleResolution": "bundler",
-        "paths": {
-            "curlui": ["./src/curlui/index.ts"],
-            "curlui/*": ["./src/curlui/*"],
-        },
     },
 }
 ```
 
 `jsxImportSource: "curlui"` makes the compiler import `curlui/jsx-runtime` (and `curlui/jsx-dev-runtime` in development builds) for every JSX expression.
-
-### Bundler
-
-Your bundler must resolve the same alias. With esbuild:
-
-```sh
-esbuild src/main.tsx --bundle --jsx=automatic --jsx-import-source=curlui \
-  --alias:curlui=./src/curlui/index.ts \
-  --alias:curlui/jsx-runtime=./src/curlui/jsx-runtime.ts \
-  --alias:curlui/jsx-dev-runtime=./src/curlui/jsx-dev-runtime.ts \
-  --outfile=dist/app.js
-```
-
-With Vite, set `esbuild: { jsx: "automatic", jsxImportSource: "curlui" }` and add matching `resolve.alias` entries.
 
 ---
 
